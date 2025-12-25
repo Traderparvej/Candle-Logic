@@ -3,133 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Candle Logic — Login</title>
+<title>Candle Logic — Quotex Real Time Signal</title>
+
 <style>
-    /* Basic Reset */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: "Courier New", monospace;
+}
 
-    body {
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: linear-gradient(135deg, #0a1a2f, #1b2b47);
-        position: relative;
-        overflow: hidden;
-    }
+body{
+  height:100vh;
+  background:#050505;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  color:#ff2b2b;
+}
 
-    /* Candle Animation Background */
-    .candle {
-        position: absolute;
-        width: 4px;
-        height: 80px;
-        background: #fffae5;
-        bottom: 50px;
-        border-radius: 2px;
-        box-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #ff8c00;
-        animation: flicker 1.5s infinite alternate;
-    }
+/* Matrix red rain */
+canvas{
+  position:absolute;
+  inset:0;
+  z-index:0;
+}
 
-    @keyframes flicker {
-        0% { transform: scaleY(1); opacity: 0.8; }
-        50% { transform: scaleY(1.1); opacity: 1; }
-        100% { transform: scaleY(0.9); opacity: 0.85; }
-    }
+/* Login panel */
+.login-box{
+  position:relative;
+  width:360px;
+  padding:45px 35px;
+  background:rgba(10,10,10,0.85);
+  backdrop-filter:blur(12px);
+  border-radius:18px;
+  border:1px solid #ff2b2b;
+  box-shadow:0 0 30px #ff2b2b;
+  text-align:center;
+  z-index:2;
+}
 
-    /* Login Box */
-    .login-box {
-        position: relative;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 40px 30px;
-        border-radius: 15px;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 0 30px rgba(0,0,0,0.5);
-        text-align: center;
-        z-index: 10;
-    }
+.login-box h1{
+  font-size:30px;
+  color:#ff2b2b;
+  text-shadow:0 0 12px #ff2b2b;
+  margin-bottom:6px;
+}
 
-    .login-box h1 {
-        color: #ffd700;
-        margin-bottom: 30px;
-        font-size: 28px;
-        letter-spacing: 1px;
-    }
+.login-box h2{
+  font-size:14px;
+  font-weight:normal;
+  color:#ff7777;
+  margin-bottom:25px;
+  letter-spacing:1px;
+}
 
-    .login-box input {
-        width: 100%;
-        padding: 12px 15px;
-        margin: 10px 0;
-        border: none;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.1);
-        color: #fff;
-        font-size: 16px;
-    }
+.login-box input{
+  width:100%;
+  padding:14px;
+  margin-bottom:18px;
+  border-radius:10px;
+  background:rgba(255,0,0,0.07);
+  border:1px solid #ff2b2b;
+  color:#ff2b2b;
+  font-size:16px;
+  outline:none;
+}
 
-    .login-box input::placeholder {
-        color: #ddd;
-    }
+.login-box input::placeholder{
+  color:#ff7777;
+}
 
-    .login-box button {
-        width: 100%;
-        padding: 12px;
-        margin-top: 15px;
-        border: none;
-        border-radius: 8px;
-        background: #ffd700;
-        color: #000;
-        font-weight: bold;
-        cursor: pointer;
-        transition: 0.3s;
-    }
+.login-box input:focus{
+  box-shadow:0 0 12px #ff2b2b;
+  background:rgba(255,0,0,0.15);
+}
 
-    .login-box button:hover {
-        background: #ffb700;
-    }
+.login-box button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff2b2b,#b30000);
+  color:#000;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.3s;
+}
 
-    /* Small Candle Decorations */
-    .candle:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .candle:nth-child(2) { left: 25%; animation-delay: 0.3s; }
-    .candle:nth-child(3) { left: 40%; animation-delay: 0.6s; }
-    .candle:nth-child(4) { left: 60%; animation-delay: 0.2s; }
-    .candle:nth-child(5) { left: 75%; animation-delay: 0.5s; }
+.login-box button:hover{
+  box-shadow:0 0 20px #ff2b2b;
+  transform:scale(1.03);
+}
+
+/* small status text */
+.status{
+  margin-top:18px;
+  font-size:12px;
+  color:#ff5555;
+  opacity:0.8;
+}
 </style>
 </head>
-<body>
-    <!-- Candle Decorations -->
-    <div class="candle"></div>
-    <div class="candle"></div>
-    <div class="candle"></div>
-    <div class="candle"></div>
-    <div class="candle"></div>
 
-    <!-- Login Box -->
-    <div class="login-box">
-        <h1>Candle Logic</h1>
-        <input type="text" placeholder="Username" id="username">
-        <input type="password" placeholder="Password" id="password">
-        <button onclick="login()">Login</button>
-    </div>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="login-box">
+  <h1>Candle Logic</h1>
+  <h2>QUOTEX • REAL TIME SIGNAL</h2>
+
+  <input type="password" id="password" placeholder="ENTER ACCESS KEY">
+  <button onclick="login()">CONNECT</button>
+
+  <div class="status">Depolapar Anonymous Hacker Team</div>
+</div>
 
 <script>
-    function login() {
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+/* Matrix red effect */
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-        // Example password protection
-        if(password === "Candle123") {
-            alert("Login Successful!");
-            // Redirect to dashboard or main page
-            window.location.href = "dashboard.html";
-        } else {
-            alert("Invalid credentials!");
-        }
+const chars = "01QUOTEXCANDLELOGICAI@$#";
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+const drops = Array.from({length:columns}).fill(1);
+
+function draw(){
+  ctx.fillStyle="rgba(0,0,0,0.08)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#ff2b2b";
+  ctx.font=fontSize+"px monospace";
+
+  drops.forEach((y,i)=>{
+    const text = chars[Math.floor(Math.random()*chars.length)];
+    ctx.fillText(text,i*fontSize,y*fontSize);
+    if(y*fontSize > canvas.height && Math.random()>0.975){
+      drops[i]=0;
     }
+    drops[i]++;
+  });
+}
+setInterval(draw,50);
+
+/* Login logic */
+function login(){
+  const pass = document.getElementById("password").value;
+  if(pass === "Hack420"){
+    window.location.href = "signal.html";
+  }else{
+    alert("❌ ACCESS DENIED");
+  }
+}
 </script>
+
 </body>
 </html>
