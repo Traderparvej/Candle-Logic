@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quotex Live Signal</title>
+<title>Quotex Signal Engine</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -16,25 +16,19 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#e6faff;
   font-family:'Inter',sans-serif;
+  color:#eaffff;
 }
 .panel{
-  width:360px;
+  width:370px;
   padding:26px;
   border-radius:22px;
   background:linear-gradient(180deg,#071f3f,#020b1c);
   box-shadow:0 0 45px rgba(0,255,255,.35);
   border:1.5px solid rgba(0,255,255,.25);
 }
-.icon{
-  text-align:center;
-  font-size:42px;
-  color:#ffae1a;
-}
 h1{
   text-align:center;
-  margin:6px 0 14px;
   font-family:'Orbitron',sans-serif;
   font-size:26px;
   letter-spacing:2px;
@@ -43,13 +37,12 @@ h1{
 .clock{
   text-align:center;
   font-family:'Orbitron',sans-serif;
-  font-size:20px;
-  margin-bottom:22px;
+  font-size:18px;
+  margin:10px 0 20px;
   color:#9ffcff;
 }
 label{
   font-size:12px;
-  font-weight:500;
   opacity:.8;
 }
 select{
@@ -60,59 +53,76 @@ select{
   border:1px solid #00f6ff55;
   border-radius:12px;
   color:#d9fbff;
-  font-size:13px;
 }
 
-/* BUTTON */
 button{
   width:100%;
   padding:16px;
   border:none;
   border-radius:18px;
   background:linear-gradient(90deg,#00f6ff,#b400ff);
-  color:#020816;
   font-family:'Orbitron',sans-serif;
   font-size:15px;
   font-weight:800;
   letter-spacing:1.5px;
   cursor:pointer;
   box-shadow:0 0 28px rgba(180,0,255,.75);
-  transition:.25s ease;
 }
 button:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 40px rgba(0,255,255,.9);
+  transform:scale(1.04);
 }
 
-.output{
+.signal{
   margin-top:22px;
-  padding:16px;
-  border-radius:14px;
+  padding:18px;
+  border-radius:16px;
   background:#041a30;
-  border:1px solid rgba(0,255,255,.2);
+  border:1px solid rgba(0,255,255,.25);
   display:none;
+  animation:fadeUp .6s ease;
 }
-.output p{
-  margin:7px 0;
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(15px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.range{
+  font-family:'Orbitron',sans-serif;
+  font-size:15px;
+  color:#00ff9c;
+  margin-bottom:10px;
+  animation:pulse 1.5s infinite;
+}
+@keyframes pulse{
+  0%{opacity:.6}
+  50%{opacity:1}
+  100%{opacity:.6}
+}
+
+.signal p{
+  margin:8px 0;
   font-size:13px;
+  line-height:1.5;
 }
+
+.buy{
+  color:#00ff9c;
+  font-weight:600;
+}
+
 .footer{
   text-align:center;
+  margin-top:16px;
   font-size:11px;
-  margin-top:18px;
-  letter-spacing:1px;
   opacity:.6;
 }
-.footer span{
-  color:#00f6ff;
-}
+.footer span{color:#00f6ff;}
 </style>
 </head>
 
 <body>
 
 <div class="panel">
-  <div class="icon">⚡</div>
   <h1>LIVE SIGNAL</h1>
 
   <div class="clock" id="clock">--:--:--</div>
@@ -121,9 +131,7 @@ button:hover{
   <select id="pair">
     <option>EUR/USD</option>
     <option>GBP/USD</option>
-    <option>AUD/USD</option>
     <option>USD/JPY</option>
-    <option>EUR/JPY</option>
   </select>
 
   <label>Strategy</label>
@@ -132,18 +140,21 @@ button:hover{
     <option>Fractal Bear</option>
   </select>
 
-  <label>UTC Time Zone</label>
-  <select>
-    <option>UTC +06 (Bangladesh)</option>
-  </select>
-
   <button onclick="generateSignal()">GENERATE LIVE SIGNAL</button>
 
-  <div class="output" id="output">
-    <p>📊 <b>Pair:</b> <span id="oPair"></span></p>
-    <p>🧠 <b>Strategy:</b> <span id="oStrategy"></span></p>
-    <p>⏰ <b>Entry Time:</b> <span id="oTime"></span></p>
-    <p>📌 Follow fractal confirmation</p>
+  <div class="signal" id="signalBox">
+    <div class="range" id="timeRange"></div>
+
+    <p>📌 <b>Condition:</b><br>
+    A <b>Long Shadow Green Candle</b> closes within this time range</p>
+
+    <p>🎯 <b>Signal:</b><br>
+    ➡️ Next Candle → <span class="buy">BUY</span></p>
+
+    <p>⏳ <b>Expiry Time:</b> 1 Minute</p>
+
+    <p>✅ <b>Confirmation:</b><br>
+    Strong Rejection + Buyer Momentum</p>
   </div>
 
   <div class="footer">
@@ -153,28 +164,25 @@ button:hover{
 
 <script>
 function updateClock(){
-  const now=new Date();
-  document.getElementById('clock').innerText=
-    now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById("clock").innerText =
+    new Date().toLocaleTimeString("en-US",{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
-setInterval(updateClock,1000);
-updateClock();
+setInterval(updateClock,1000); updateClock();
 
 function generateSignal(){
-  const pair=document.getElementById('pair').value;
-  const strategy=document.getElementById('strategy').value;
+  const start = new Date();
+  start.setMinutes(start.getMinutes()+Math.floor(Math.random()*3)+2);
 
-  const future=new Date();
-  const gap=Math.floor(Math.random()*5)+4; // 4–8 min
-  future.setMinutes(future.getMinutes()+gap);
+  const range = Math.floor(Math.random()*3)+4; // 4–6 min
+  const end = new Date(start.getTime());
+  end.setMinutes(end.getMinutes()+range);
 
-  const time=future.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  const format = t => t.toLocaleTimeString("en-US",{hour:'2-digit',minute:'2-digit'});
 
-  document.getElementById('oPair').innerText=pair;
-  document.getElementById('oStrategy').innerText=strategy;
-  document.getElementById('oTime').innerText=time;
+  document.getElementById("timeRange").innerText =
+    `⏰ Time Range: ${format(start)} – ${format(end)}`;
 
-  document.getElementById('output').style.display='block';
+  document.getElementById("signalBox").style.display="block";
 }
 </script>
 
