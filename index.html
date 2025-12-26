@@ -63,7 +63,7 @@ select{
   font-size:13px;
 }
 
-/* BUTTON FIX */
+/* BUTTON */
 button{
   width:100%;
   padding:16px;
@@ -128,9 +128,6 @@ button:hover{
 
   <label>Strategy</label>
   <select id="strategy">
-    <option>Breakout</option>
-    <option>Running Candle</option>
-    <option>Opposite Candle</option>
     <option>Fractal Bull</option>
     <option>Fractal Bear</option>
   </select>
@@ -146,7 +143,7 @@ button:hover{
     <p>📊 <b>Pair:</b> <span id="oPair"></span></p>
     <p>🧠 <b>Strategy:</b> <span id="oStrategy"></span></p>
     <p>⏰ <b>Entry Time:</b> <span id="oTime"></span></p>
-    <p>📌 Follow previous candle direction</p>
+    <p>📌 Follow fractal confirmation</p>
   </div>
 
   <div class="footer">
@@ -168,7 +165,7 @@ function generateSignal(){
   const strategy=document.getElementById('strategy').value;
 
   const future=new Date();
-  const gap=Math.floor(Math.random()*5)+4; // 4–8 minutes
+  const gap=Math.floor(Math.random()*5)+4; // 4–8 min
   future.setMinutes(future.getMinutes()+gap);
 
   const time=future.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
