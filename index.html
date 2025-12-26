@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quotex Signal Engine - Fractal Bear</title>
+<title>Quotex Signal Engine - Premium Red</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -20,25 +20,30 @@ body{
   color:#ffeaea;
 }
 .panel{
-  width:370px;
-  padding:26px;
-  border-radius:22px;
+  width:420px;
+  padding:28px;
+  border-radius:24px;
   background:linear-gradient(180deg,#3d0f0f,#120303);
-  box-shadow:0 0 45px rgba(255,0,0,.35);
-  border:1.5px solid rgba(255,0,0,.25);
+  box-shadow:0 0 50px rgba(255,0,0,.45);
+  border:2px solid rgba(255,0,0,.25);
+  transition: all 0.3s ease;
+}
+.panel:hover{
+  box-shadow:0 0 60px rgba(255,0,0,.65);
 }
 h1{
   text-align:center;
   font-family:'Orbitron',sans-serif;
-  font-size:26px;
+  font-size:28px;
   letter-spacing:2px;
   color:#ff3b3b;
+  text-shadow: 0 0 8px #ff0000;
 }
 .clock{
   text-align:center;
   font-family:'Orbitron',sans-serif;
   font-size:18px;
-  margin:10px 0 20px;
+  margin:12px 0 24px;
   color:#ff7f7f;
 }
 label{
@@ -47,91 +52,129 @@ label{
 }
 select{
   width:100%;
-  padding:13px;
-  margin:8px 0 16px;
+  padding:14px;
+  margin:10px 0 18px;
   background:#2b0c0c;
   border:1px solid #ff3b3b55;
-  border-radius:12px;
+  border-radius:14px;
   color:#ffd9d9;
+  font-weight:500;
 }
-
 button{
-  width:100%;
+  width:48%;
   padding:16px;
+  margin:0 1%;
   border:none;
-  border-radius:18px;
-  background:linear-gradient(90deg,#ff3b3b,#ff00d4);
+  border-radius:20px;
+  background:linear-gradient(90deg,#ff3b3b,#ff0000);
   font-family:'Orbitron',sans-serif;
-  font-size:15px;
+  font-size:16px;
   font-weight:800;
   letter-spacing:1.5px;
   cursor:pointer;
-  box-shadow:0 0 28px rgba(255,0,0,.75);
+  box-shadow:0 0 30px rgba(255,0,0,.75);
+  transition: all 0.2s ease;
 }
 button:hover{
-  transform:scale(1.04);
+  transform:scale(1.05);
+  box-shadow:0 0 40px rgba(255,0,0,.85);
 }
-
 .signal{
-  margin-top:22px;
-  padding:18px;
-  border-radius:16px;
+  margin-top:24px;
+  padding:22px;
+  border-radius:18px;
   background:#2a0a0a;
-  border:1px solid rgba(255,0,0,.25);
+  border:2px solid rgba(255,0,0,.35);
   display:none;
   animation:fadeUp .6s ease;
+  box-shadow: 0 0 25px rgba(255,0,0,.35);
+  transition: all 0.3s ease;
 }
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(15px);}
   to{opacity:1;transform:translateY(0);}
 }
-
-.range{
-  font-family:'Orbitron',sans-serif;
-  font-size:15px;
-  color:#ff6666;
-  margin-bottom:10px;
-  animation:pulse 1.5s infinite;
+.signal-card{
+  background:#1c0b0b;
+  border:2px solid rgba(255,0,0,.5);
+  border-radius:16px;
+  padding:18px 22px;
+  box-shadow:0 0 20px rgba(255,0,0,.4);
+  font-size:14px;
+  line-height:1.6;
+  color:#ffeaea;
+  animation:fadeUp .6s ease;
 }
-@keyframes pulse{
-  0%{opacity:.6}
-  50%{opacity:1}
-  100%{opacity:.6}
-}
-
-.signal p{
-  margin:8px 0;
-  font-size:13px;
-  line-height:1.5;
-}
-
-.sell{
-  color:#ff6666;
-  font-weight:600;
-}
-
-.footer{
-  text-align:center;
-  margin-top:16px;
-  font-size:11px;
-  opacity:.6;
-}
+.signal-card b{ color:#ff3b3b; }
+.signal-card i{ color:#ff7f7f; }
+.buy{ color:#00ff9c; font-weight:700; text-shadow:0 0 8px #00ff9c; }
+.sell{ color:#ff6666; font-weight:700; text-shadow:0 0 8px #ff4444; }
+.warning{ color:#ff6666; font-weight:700; font-size:14px; text-shadow:0 0 5px #ff0000; line-height:1.5; text-align:center; }
+.footer{ text-align:center; margin-top:18px; font-size:11px; opacity:.6; }
 .footer span{color:#ff3b3b;}
+.timer{ text-align:center; font-size:14px; color:#ffd9d9; margin-top:10px; }
+
+/* Modal Styles */
+.modal-bg{
+  display:none;
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(4px);
+  z-index:999;
+  align-items:center;
+  justify-content:center;
+}
+.modal{
+  background:#2a0a0a;
+  padding:24px;
+  border-radius:16px;
+  width:300px;
+  text-align:center;
+  border:2px solid #ff3b3b;
+  box-shadow:0 0 25px rgba(255,0,0,.5);
+}
+.modal h2{ margin-bottom:16px; color:#ff3b3b; }
+.modal input{
+  width:100%;
+  padding:12px;
+  margin-bottom:14px;
+  border-radius:12px;
+  border:1px solid #ff3b3b55;
+  background:#1c0b0b;
+  color:#ffd9d9;
+  font-size:14px;
+}
+.modal button{
+  width:48%;
+  margin:0 1%;
+}
+.modal .error{ color:#ff6666; margin-top:6px; font-size:13px; }
 </style>
 </head>
 
 <body>
 
 <div class="panel">
-  <h1>LIVE SIGNAL</h1>
-
+  <h1>FRACTAL LOGIC</h1>
   <div class="clock" id="clock">--:--:--</div>
 
   <label>Asset Pair</label>
   <select id="pair">
-    <option>EUR/USD</option>
-    <option>GBP/USD</option>
-    <option>USD/JPY</option>
+    <option>USD/INR (OTC)</option>
+    <option>USD/BRL (OTC)</option>
+    <option>NZD/CAD (OTC)</option>
+    <option>USD/DZD (OTC)</option>
+    <option>NZD/JPY (OTC)</option>
+    <option>GBP/NZD (OTC)</option>
+    <option>USD/ARS (OTC)</option>
+    <option>USD/TRY (OTC)</option>
+    <option>USD/COP (OTC)</option>
+    <option>USD/PHP (OTC)</option>
+    <option>NZD/CHF (OTC)</option>
+    <option>USD/EGP (OTC)</option>
+    <option>USD/MXN (OTC)</option>
   </select>
 
   <label>Strategy</label>
@@ -140,21 +183,14 @@ button:hover{
     <option>Fractal Bear</option>
   </select>
 
-  <button onclick="generateSignal()">GENERATE LIVE SIGNAL</button>
+  <div style="display:flex; justify-content:space-between;">
+    <button onclick="openModal()">GENERATE SIGNAL</button>
+    <button onclick="resetSignal()">RESET</button>
+  </div>
 
   <div class="signal" id="signalBox">
-    <div class="range" id="timeRange"></div>
-
-    <p>📌 <b>Condition:</b><br>
-    A <b>Long Shadow Red Candle</b> closes within this time range</p>
-
-    <p>🎯 <b>Signal:</b><br>
-    ➡️ Next Candle → <span class="sell">SELL</span></p>
-
-    <p>⏳ <b>Expiry Time:</b> 1 Minute</p>
-
-    <p>✅ <b>Confirmation:</b><br>
-    Strong Rejection + Seller Momentum</p>
+    <div class="signal-card" id="message"></div>
+    <div class="timer" id="timer"></div>
   </div>
 
   <div class="footer">
@@ -162,27 +198,109 @@ button:hover{
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2>🔒 Enter Verification Code</h2>
+    <input type="password" id="codeInput" placeholder="Enter code...">
+    <div style="display:flex; justify-content:space-between;">
+      <button onclick="submitCode()">Submit</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+    <div class="error" id="modalError"></div>
+  </div>
+</div>
+
 <script>
+let cooldown = false;
+let countdownInterval;
+const verifyCode = "105";
+
 function updateClock(){
   document.getElementById("clock").innerText =
     new Date().toLocaleTimeString("en-US",{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
 setInterval(updateClock,1000); updateClock();
 
+// Modal functions
+function openModal(){
+  document.getElementById("modalBg").style.display = "flex";
+  document.getElementById("codeInput").value = "";
+  document.getElementById("modalError").innerText = "";
+}
+function closeModal(){
+  document.getElementById("modalBg").style.display = "none";
+}
+function submitCode(){
+  const input = document.getElementById("codeInput").value;
+  if(input === verifyCode){
+    closeModal();
+    generateSignal();
+  } else {
+    document.getElementById("modalError").innerText = "❌ Incorrect code!";
+  }
+}
+
 function generateSignal(){
-  const start = new Date();
-  start.setMinutes(start.getMinutes()+1); // start from next minute
+  if(cooldown){
+    alert("⏳ Wait until current 5-minute session ends to generate next signal!");
+    return;
+  }
 
-  const range = Math.floor(Math.random()*3)+3; // 3–5 min range
-  const end = new Date(start.getTime());
-  end.setMinutes(end.getMinutes()+range);
+  const pair = document.getElementById("pair").value;
+  const strategy = document.getElementById("strategy").value;
+  const msgBox = document.getElementById("message");
+  const timerBox = document.getElementById("timer");
 
-  const format = t => t.toLocaleTimeString("en-US",{hour:'2-digit',minute:'2-digit'});
+  if(Math.random() < 0.25){
+    msgBox.innerHTML = `⚠️ Market conditions are currently unstable.<br>Please consider another asset pair for safer trading.`;
+    msgBox.className = "warning";
+  } else {
+    let signalType = (strategy === "Fractal Bull") ? "BUY" : "SELL";
+    let conditionText = (strategy === "Fractal Bull") 
+      ? "Long Lower Shadow Green Candle<br>(Within next 5 candles)" 
+      : "Long Upper Shadow Red Candle<br>(Within next 5 candles)";
 
-  document.getElementById("timeRange").innerText =
-    `⏰ Time Range: ${format(start)} – ${format(end)}`;
+    msgBox.innerHTML = `
+      🔔 <b>FRACTAL PREMIUM SIGNAL</b><br><br>
+      💱 <b>Pair:</b> ${pair}<br>
+      ➡️ <span class="${signalType==="BUY"?"buy":"sell"}">${signalType}</span><br><br>
+      ⏱ <b>Expiry:</b> 1 Minute<br><br>
+      📌 <b>Condition:</b><br><i>${conditionText}</i><br><br>
+      ✅ <b>Confirmation:</b><br>Rejection + ${signalType==="BUY"?"Bullish":"Bearish"} Momentum
+    `;
+    msgBox.className = "signal-card";
+  }
 
-  document.getElementById("signalBox").style.display="block";
+  document.getElementById("signalBox").style.display = "block";
+
+  cooldown = true;
+  let remaining = 5 * 60; 
+  timerBox.innerText = `Next signal available in: ${formatTime(remaining)}`;
+
+  countdownInterval = setInterval(()=>{
+    remaining--;
+    if(remaining <= 0){
+      clearInterval(countdownInterval);
+      timerBox.innerText = `✅ You can generate a new signal now.`;
+      cooldown = false;
+    } else {
+      timerBox.innerText = `Next signal available in: ${formatTime(remaining)}`;
+    }
+  },1000);
+}
+
+function resetSignal(){
+  cooldown = false;
+  clearInterval(countdownInterval);
+  document.getElementById("signalBox").style.display = "none";
+  document.getElementById("timer").innerText = "";
+}
+
+function formatTime(sec){
+  let m = Math.floor(sec/60);
+  let s = sec % 60;
+  return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
 }
 </script>
 
