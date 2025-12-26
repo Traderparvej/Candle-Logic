@@ -2,164 +2,157 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Live Signal Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Candle Logic — Quotex Real Time Signal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 *{
-  margin:0;
-  padding:0;
   box-sizing:border-box;
-  font-family: "Courier New", monospace;
+  font-family:'Orbitron',sans-serif;
 }
-
 body{
-  height:100vh;
-  background:#050505;
+  background:radial-gradient(circle at top,#0b1a3a,#020816);
+  min-height:100vh;
   display:flex;
-  justify-content:center;
   align-items:center;
-  overflow:hidden;
-  color:#ff2b2b;
+  justify-content:center;
+  color:#00f6ff;
 }
-
-/* Matrix red rain */
-canvas{
-  position:absolute;
-  inset:0;
-  z-index:0;
-}
-
-/* Login panel */
-.login-box{
-  position:relative;
+.panel{
   width:360px;
-  padding:45px 35px;
-  background:rgba(10,10,10,0.85);
-  backdrop-filter:blur(12px);
-  border-radius:18px;
-  border:1px solid #ff2b2b;
-  box-shadow:0 0 30px #ff2b2b;
+  padding:25px;
+  border-radius:20px;
+  background:linear-gradient(180deg,#071a33,#020b1c);
+  box-shadow:0 0 30px rgba(0,255,255,.3);
+  border:2px solid rgba(0,255,255,.2);
+}
+.icon{
   text-align:center;
-  z-index:2;
+  font-size:40px;
+  color:#ff9f1c;
 }
-
-.login-box h1{
-  font-size:30px;
-  color:#ff2b2b;
-  text-shadow:0 0 12px #ff2b2b;
-  margin-bottom:6px;
+h1{
+  text-align:center;
+  margin:10px 0;
+  letter-spacing:2px;
 }
-
-.login-box h2{
-  font-size:14px;
-  font-weight:normal;
-  color:#ff7777;
-  margin-bottom:25px;
-  letter-spacing:1px;
+.clock{
+  text-align:center;
+  font-size:20px;
+  margin-bottom:20px;
 }
-
-.login-box input{
+label{
+  font-size:12px;
+  opacity:.8;
+}
+select{
   width:100%;
-  padding:14px;
-  margin-bottom:18px;
+  padding:12px;
+  margin:8px 0 15px;
+  background:#061a33;
+  border:1px solid #00f6ff55;
   border-radius:10px;
-  background:rgba(255,0,0,0.07);
-  border:1px solid #ff2b2b;
-  color:#ff2b2b;
-  font-size:16px;
-  outline:none;
+  color:#00f6ff;
 }
-
-.login-box input::placeholder{
-  color:#ff7777;
-}
-
-.login-box input:focus{
-  box-shadow:0 0 12px #ff2b2b;
-  background:rgba(255,0,0,0.15);
-}
-
-.login-box button{
+button{
   width:100%;
   padding:14px;
   border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff2b2b,#b30000);
+  border-radius:14px;
+  background:linear-gradient(90deg,#00f6ff,#b400ff);
   color:#000;
-  font-size:16px;
-  font-weight:bold;
+  font-weight:600;
   cursor:pointer;
-  transition:.3s;
+  box-shadow:0 0 20px rgba(180,0,255,.6);
 }
-
-.login-box button:hover{
-  box-shadow:0 0 20px #ff2b2b;
-  transform:scale(1.03);
+.output{
+  margin-top:20px;
+  padding:15px;
+  border-radius:12px;
+  background:#041225;
+  display:none;
 }
-
-/* small status text */
-.status{
-  margin-top:18px;
-  font-size:12px;
-  color:#ff5555;
-  opacity:0.8;
+.output p{
+  margin:6px 0;
+  font-size:13px;
+}
+.footer{
+  text-align:center;
+  font-size:10px;
+  opacity:.5;
+  margin-top:15px;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="matrix"></canvas>
+<div class="panel">
+  <div class="icon">⚡</div>
+  <h1>LIVE SIGNAL</h1>
 
-<div class="login-box">
-  <h1>Candle Logic</h1>
-  <h2>QUOTEX • REAL TIME SIGNAL</h2>
+  <div class="clock" id="clock">--:--:--</div>
 
-  <input type="password" id="password" placeholder="ENTER ACCESS KEY">
-  <button onclick="login()">CONNECT</button>
+  <label>Asset Pair</label>
+  <select id="pair">
+    <option>EUR/USD</option>
+    <option>GBP/USD</option>
+    <option>AUD/USD</option>
+    <option>USD/JPY</option>
+    <option>EUR/JPY</option>
+  </select>
 
-  <div class="status">Depolapar Anonymous Hacker Team</div>
+  <label>Strategy</label>
+  <select id="strategy">
+    <option>Breakout</option>
+    <option>Running Candle</option>
+    <option>Opposite Candle</option>
+  </select>
+
+  <label>UTC Time Zone</label>
+  <select>
+    <option>UTC +06 (BD)</option>
+  </select>
+
+  <button onclick="generateSignal()">GENERATE LIVE SIGNAL ✨</button>
+
+  <div class="output" id="output">
+    <p>📊 Pair: <span id="oPair"></span></p>
+    <p>🧠 Strategy: <span id="oStrategy"></span></p>
+    <p>⏰ Entry Time: <span id="oTime"></span></p>
+    <p>📌 Rule: Trade in previous candle direction</p>
+  </div>
+
+  <div class="footer">AI Signal Engine • Demo UI</div>
 </div>
 
 <script>
-/* Matrix red effect */
-const canvas = document.getElementById("matrix");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const chars = "01QUOTEXCANDLELOGICAI@$#";
-const fontSize = 16;
-const columns = canvas.width / fontSize;
-const drops = Array.from({length:columns}).fill(1);
-
-function draw(){
-  ctx.fillStyle="rgba(0,0,0,0.08)";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  ctx.fillStyle="#ff2b2b";
-  ctx.font=fontSize+"px monospace";
-
-  drops.forEach((y,i)=>{
-    const text = chars[Math.floor(Math.random()*chars.length)];
-    ctx.fillText(text,i*fontSize,y*fontSize);
-    if(y*fontSize > canvas.height && Math.random()>0.975){
-      drops[i]=0;
-    }
-    drops[i]++;
-  });
+function updateClock(){
+  const now=new Date();
+  const options={hour:'2-digit',minute:'2-digit',second:'2-digit'};
+  document.getElementById('clock').innerText=
+    now.toLocaleTimeString('en-US',options);
 }
-setInterval(draw,50);
+setInterval(updateClock,1000);
+updateClock();
 
-/* Login logic */
-function login(){
-  const pass = document.getElementById("password").value;
-  if(pass === "Hack420"){
-    window.location.href = "signal.html";
-  }else{
-    alert("❌ ACCESS DENIED");
-  }
+function generateSignal(){
+  const pair=document.getElementById('pair').value;
+  const strategy=document.getElementById('strategy').value;
+
+  const now=new Date();
+  const gap=Math.floor(Math.random()*5)+4; // 4–8 min
+  now.setMinutes(now.getMinutes()+gap);
+
+  const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+  document.getElementById('oPair').innerText=pair;
+  document.getElementById('oStrategy').innerText=strategy;
+  document.getElementById('oTime').innerText=time;
+
+  document.getElementById('output').style.display='block';
 }
 </script>
 
