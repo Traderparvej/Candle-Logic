@@ -2,87 +2,108 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Live Signal Panel</title>
+<title>Quotex Live Signal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 *{
   box-sizing:border-box;
-  font-family:'Orbitron',sans-serif;
 }
 body{
-  background:radial-gradient(circle at top,#0b1a3a,#020816);
+  margin:0;
+  background:radial-gradient(circle at top,#0b1f44,#020816);
   min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
-  color:#00f6ff;
+  color:#e6faff;
+  font-family:'Inter',sans-serif;
 }
 .panel{
   width:360px;
-  padding:25px;
-  border-radius:20px;
-  background:linear-gradient(180deg,#071a33,#020b1c);
-  box-shadow:0 0 30px rgba(0,255,255,.3);
-  border:2px solid rgba(0,255,255,.2);
+  padding:26px;
+  border-radius:22px;
+  background:linear-gradient(180deg,#071f3f,#020b1c);
+  box-shadow:0 0 40px rgba(0,255,255,.35);
+  border:1.5px solid rgba(0,255,255,.25);
 }
 .icon{
   text-align:center;
-  font-size:40px;
-  color:#ff9f1c;
+  font-size:42px;
+  color:#ffae1a;
+  margin-bottom:4px;
 }
 h1{
   text-align:center;
-  margin:10px 0;
+  margin:6px 0 12px;
+  font-family:'Orbitron',sans-serif;
+  font-size:26px;
   letter-spacing:2px;
+  color:#00f6ff;
 }
 .clock{
   text-align:center;
+  font-family:'Orbitron',sans-serif;
   font-size:20px;
-  margin-bottom:20px;
+  margin-bottom:22px;
+  color:#9ffcff;
 }
 label{
   font-size:12px;
-  opacity:.8;
+  font-weight:500;
+  opacity:.75;
 }
 select{
   width:100%;
-  padding:12px;
-  margin:8px 0 15px;
+  padding:13px;
+  margin:8px 0 16px;
   background:#061a33;
   border:1px solid #00f6ff55;
-  border-radius:10px;
-  color:#00f6ff;
+  border-radius:12px;
+  color:#d9fbff;
+  font-size:13px;
 }
 button{
   width:100%;
-  padding:14px;
+  padding:15px;
   border:none;
-  border-radius:14px;
+  border-radius:16px;
   background:linear-gradient(90deg,#00f6ff,#b400ff);
-  color:#000;
+  color:#020816;
+  font-family:'Orbitron',sans-serif;
+  font-size:14px;
   font-weight:600;
+  letter-spacing:1px;
   cursor:pointer;
-  box-shadow:0 0 20px rgba(180,0,255,.6);
+  box-shadow:0 0 22px rgba(180,0,255,.6);
+  transition:.2s;
+}
+button:hover{
+  transform:scale(1.03);
 }
 .output{
-  margin-top:20px;
-  padding:15px;
-  border-radius:12px;
-  background:#041225;
+  margin-top:22px;
+  padding:16px;
+  border-radius:14px;
+  background:#041a30;
+  border:1px solid rgba(0,255,255,.2);
   display:none;
 }
 .output p{
-  margin:6px 0;
+  margin:7px 0;
   font-size:13px;
 }
 .footer{
   text-align:center;
-  font-size:10px;
-  opacity:.5;
-  margin-top:15px;
+  font-size:11px;
+  margin-top:18px;
+  letter-spacing:1px;
+  opacity:.6;
+}
+.footer span{
+  color:#00f6ff;
 }
 </style>
 </head>
@@ -113,27 +134,28 @@ button{
 
   <label>UTC Time Zone</label>
   <select>
-    <option>UTC +06 (BD)</option>
+    <option>UTC +06 (Bangladesh)</option>
   </select>
 
   <button onclick="generateSignal()">GENERATE LIVE SIGNAL ✨</button>
 
   <div class="output" id="output">
-    <p>📊 Pair: <span id="oPair"></span></p>
-    <p>🧠 Strategy: <span id="oStrategy"></span></p>
-    <p>⏰ Entry Time: <span id="oTime"></span></p>
-    <p>📌 Rule: Trade in previous candle direction</p>
+    <p>📊 <b>Pair:</b> <span id="oPair"></span></p>
+    <p>🧠 <b>Strategy:</b> <span id="oStrategy"></span></p>
+    <p>⏰ <b>Entry Time:</b> <span id="oTime"></span></p>
+    <p>📌 Follow previous candle direction</p>
   </div>
 
-  <div class="footer">AI Signal Engine • Demo UI</div>
+  <div class="footer">
+    © Powered by <span>Quotex Signal Engine</span>
+  </div>
 </div>
 
 <script>
 function updateClock(){
   const now=new Date();
-  const options={hour:'2-digit',minute:'2-digit',second:'2-digit'};
   document.getElementById('clock').innerText=
-    now.toLocaleTimeString('en-US',options);
+    now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -142,11 +164,11 @@ function generateSignal(){
   const pair=document.getElementById('pair').value;
   const strategy=document.getElementById('strategy').value;
 
-  const now=new Date();
-  const gap=Math.floor(Math.random()*5)+4; // 4–8 min
-  now.setMinutes(now.getMinutes()+gap);
+  const future=new Date();
+  const gap=Math.floor(Math.random()*5)+4; // 4–8 minutes
+  future.setMinutes(future.getMinutes()+gap);
 
-  const time=now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  const time=future.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
 
   document.getElementById('oPair').innerText=pair;
   document.getElementById('oStrategy').innerText=strategy;
