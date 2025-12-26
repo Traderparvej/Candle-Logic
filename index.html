@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quotex Signal Engine</title>
+<title>Quotex Signal Engine - Fractal Bear</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,35 +11,35 @@
 *{box-sizing:border-box;}
 body{
   margin:0;
-  background:radial-gradient(circle at top,#0b1f44,#020816);
+  background:radial-gradient(circle at top,#2a0a0a,#090202);
   min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
   font-family:'Inter',sans-serif;
-  color:#eaffff;
+  color:#ffeaea;
 }
 .panel{
   width:370px;
   padding:26px;
   border-radius:22px;
-  background:linear-gradient(180deg,#071f3f,#020b1c);
-  box-shadow:0 0 45px rgba(0,255,255,.35);
-  border:1.5px solid rgba(0,255,255,.25);
+  background:linear-gradient(180deg,#3d0f0f,#120303);
+  box-shadow:0 0 45px rgba(255,0,0,.35);
+  border:1.5px solid rgba(255,0,0,.25);
 }
 h1{
   text-align:center;
   font-family:'Orbitron',sans-serif;
   font-size:26px;
   letter-spacing:2px;
-  color:#00f6ff;
+  color:#ff3b3b;
 }
 .clock{
   text-align:center;
   font-family:'Orbitron',sans-serif;
   font-size:18px;
   margin:10px 0 20px;
-  color:#9ffcff;
+  color:#ff7f7f;
 }
 label{
   font-size:12px;
@@ -49,10 +49,10 @@ select{
   width:100%;
   padding:13px;
   margin:8px 0 16px;
-  background:#061a33;
-  border:1px solid #00f6ff55;
+  background:#2b0c0c;
+  border:1px solid #ff3b3b55;
   border-radius:12px;
-  color:#d9fbff;
+  color:#ffd9d9;
 }
 
 button{
@@ -60,13 +60,13 @@ button{
   padding:16px;
   border:none;
   border-radius:18px;
-  background:linear-gradient(90deg,#00f6ff,#b400ff);
+  background:linear-gradient(90deg,#ff3b3b,#ff00d4);
   font-family:'Orbitron',sans-serif;
   font-size:15px;
   font-weight:800;
   letter-spacing:1.5px;
   cursor:pointer;
-  box-shadow:0 0 28px rgba(180,0,255,.75);
+  box-shadow:0 0 28px rgba(255,0,0,.75);
 }
 button:hover{
   transform:scale(1.04);
@@ -76,8 +76,8 @@ button:hover{
   margin-top:22px;
   padding:18px;
   border-radius:16px;
-  background:#041a30;
-  border:1px solid rgba(0,255,255,.25);
+  background:#2a0a0a;
+  border:1px solid rgba(255,0,0,.25);
   display:none;
   animation:fadeUp .6s ease;
 }
@@ -89,7 +89,7 @@ button:hover{
 .range{
   font-family:'Orbitron',sans-serif;
   font-size:15px;
-  color:#00ff9c;
+  color:#ff6666;
   margin-bottom:10px;
   animation:pulse 1.5s infinite;
 }
@@ -105,8 +105,8 @@ button:hover{
   line-height:1.5;
 }
 
-.buy{
-  color:#00ff9c;
+.sell{
+  color:#ff6666;
   font-weight:600;
 }
 
@@ -116,7 +116,7 @@ button:hover{
   font-size:11px;
   opacity:.6;
 }
-.footer span{color:#00f6ff;}
+.footer span{color:#ff3b3b;}
 </style>
 </head>
 
@@ -146,15 +146,15 @@ button:hover{
     <div class="range" id="timeRange"></div>
 
     <p>📌 <b>Condition:</b><br>
-    A <b>Long Shadow Green Candle</b> closes within this time range</p>
+    A <b>Long Shadow Red Candle</b> closes within this time range</p>
 
     <p>🎯 <b>Signal:</b><br>
-    ➡️ Next Candle → <span class="buy">BUY</span></p>
+    ➡️ Next Candle → <span class="sell">SELL</span></p>
 
     <p>⏳ <b>Expiry Time:</b> 1 Minute</p>
 
     <p>✅ <b>Confirmation:</b><br>
-    Strong Rejection + Buyer Momentum</p>
+    Strong Rejection + Seller Momentum</p>
   </div>
 
   <div class="footer">
@@ -171,9 +171,9 @@ setInterval(updateClock,1000); updateClock();
 
 function generateSignal(){
   const start = new Date();
-  start.setMinutes(start.getMinutes()+Math.floor(Math.random()*3)+2);
+  start.setMinutes(start.getMinutes()+1); // start from next minute
 
-  const range = Math.floor(Math.random()*3)+4; // 4–6 min
+  const range = Math.floor(Math.random()*3)+3; // 3–5 min range
   const end = new Date(start.getTime());
   end.setMinutes(end.getMinutes()+range);
 
