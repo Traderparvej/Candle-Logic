@@ -5,12 +5,10 @@
 <title>Quotex Live Signal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 body{
   margin:0;
   background:radial-gradient(circle at top,#0b1f44,#020816);
@@ -26,18 +24,17 @@ body{
   padding:26px;
   border-radius:22px;
   background:linear-gradient(180deg,#071f3f,#020b1c);
-  box-shadow:0 0 40px rgba(0,255,255,.35);
+  box-shadow:0 0 45px rgba(0,255,255,.35);
   border:1.5px solid rgba(0,255,255,.25);
 }
 .icon{
   text-align:center;
   font-size:42px;
   color:#ffae1a;
-  margin-bottom:4px;
 }
 h1{
   text-align:center;
-  margin:6px 0 12px;
+  margin:6px 0 14px;
   font-family:'Orbitron',sans-serif;
   font-size:26px;
   letter-spacing:2px;
@@ -53,7 +50,7 @@ h1{
 label{
   font-size:12px;
   font-weight:500;
-  opacity:.75;
+  opacity:.8;
 }
 select{
   width:100%;
@@ -65,24 +62,28 @@ select{
   color:#d9fbff;
   font-size:13px;
 }
+
+/* BUTTON FIX */
 button{
   width:100%;
-  padding:15px;
+  padding:16px;
   border:none;
-  border-radius:16px;
+  border-radius:18px;
   background:linear-gradient(90deg,#00f6ff,#b400ff);
   color:#020816;
   font-family:'Orbitron',sans-serif;
-  font-size:14px;
-  font-weight:600;
-  letter-spacing:1px;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:1.5px;
   cursor:pointer;
-  box-shadow:0 0 22px rgba(180,0,255,.6);
-  transition:.2s;
+  box-shadow:0 0 28px rgba(180,0,255,.75);
+  transition:.25s ease;
 }
 button:hover{
-  transform:scale(1.03);
+  transform:scale(1.05);
+  box-shadow:0 0 40px rgba(0,255,255,.9);
 }
+
 .output{
   margin-top:22px;
   padding:16px;
@@ -130,6 +131,8 @@ button:hover{
     <option>Breakout</option>
     <option>Running Candle</option>
     <option>Opposite Candle</option>
+    <option>Fractal Bull</option>
+    <option>Fractal Bear</option>
   </select>
 
   <label>UTC Time Zone</label>
@@ -137,7 +140,7 @@ button:hover{
     <option>UTC +06 (Bangladesh)</option>
   </select>
 
-  <button onclick="generateSignal()">GENERATE LIVE SIGNAL ✨</button>
+  <button onclick="generateSignal()">GENERATE LIVE SIGNAL</button>
 
   <div class="output" id="output">
     <p>📊 <b>Pair:</b> <span id="oPair"></span></p>
