@@ -2,155 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quotex Signal Engine - Premium Red</title>
+<title>Quotex Signal Engine - Fractal Logic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box;}
-body{
-  margin:0;
-  background:radial-gradient(circle at top,#2a0a0a,#090202);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:'Inter',sans-serif;
-  color:#ffeaea;
-}
-.panel{
-  width:420px;
-  padding:28px;
-  border-radius:24px;
-  background:linear-gradient(180deg,#3d0f0f,#120303);
-  box-shadow:0 0 50px rgba(255,0,0,.45);
-  border:2px solid rgba(255,0,0,.25);
-  transition: all 0.3s ease;
-}
-.panel:hover{
-  box-shadow:0 0 60px rgba(255,0,0,.65);
-}
-h1{
-  text-align:center;
-  font-family:'Orbitron',sans-serif;
-  font-size:28px;
-  letter-spacing:2px;
-  color:#ff3b3b;
-  text-shadow: 0 0 8px #ff0000;
-}
-.clock{
-  text-align:center;
-  font-family:'Orbitron',sans-serif;
-  font-size:18px;
-  margin:12px 0 24px;
-  color:#ff7f7f;
-}
-label{
-  font-size:12px;
-  opacity:.8;
-}
-select{
-  width:100%;
-  padding:14px;
-  margin:10px 0 18px;
-  background:#2b0c0c;
-  border:1px solid #ff3b3b55;
-  border-radius:14px;
-  color:#ffd9d9;
-  font-weight:500;
-}
-button{
-  width:48%;
-  padding:16px;
-  margin:0 1%;
-  border:none;
-  border-radius:20px;
-  background:linear-gradient(90deg,#ff3b3b,#ff0000);
-  font-family:'Orbitron',sans-serif;
-  font-size:16px;
-  font-weight:800;
-  letter-spacing:1.5px;
-  cursor:pointer;
-  box-shadow:0 0 30px rgba(255,0,0,.75);
-  transition: all 0.2s ease;
-}
-button:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 40px rgba(255,0,0,.85);
-}
-.signal{
-  margin-top:24px;
-  padding:22px;
-  border-radius:18px;
-  background:#2a0a0a;
-  border:2px solid rgba(255,0,0,.35);
-  display:none;
-  animation:fadeUp .6s ease;
-  box-shadow: 0 0 25px rgba(255,0,0,.35);
-  transition: all 0.3s ease;
-}
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(15px);}
-  to{opacity:1;transform:translateY(0);}
-}
-.signal-card{
-  background:#1c0b0b;
-  border:2px solid rgba(255,0,0,.5);
-  border-radius:16px;
-  padding:18px 22px;
-  box-shadow:0 0 20px rgba(255,0,0,.4);
-  font-size:14px;
-  line-height:1.6;
-  color:#ffeaea;
-  animation:fadeUp .6s ease;
-}
-.signal-card b{ color:#ff3b3b; }
-.signal-card i{ color:#ff7f7f; }
-.buy{ color:#00ff9c; font-weight:700; text-shadow:0 0 8px #00ff9c; }
-.sell{ color:#ff6666; font-weight:700; text-shadow:0 0 8px #ff4444; }
-.warning{ color:#ff6666; font-weight:700; font-size:14px; text-shadow:0 0 5px #ff0000; line-height:1.5; text-align:center; }
-.footer{ text-align:center; margin-top:18px; font-size:11px; opacity:.6; }
-.footer span{color:#ff3b3b;}
-.timer{ text-align:center; font-size:14px; color:#ffd9d9; margin-top:10px; }
-
-/* Modal Styles */
-.modal-bg{
-  display:none;
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.75);
-  backdrop-filter:blur(4px);
-  z-index:999;
-  align-items:center;
-  justify-content:center;
-}
-.modal{
-  background:#2a0a0a;
-  padding:24px;
-  border-radius:16px;
-  width:300px;
-  text-align:center;
-  border:2px solid #ff3b3b;
-  box-shadow:0 0 25px rgba(255,0,0,.5);
-}
-.modal h2{ margin-bottom:16px; color:#ff3b3b; }
-.modal input{
-  width:100%;
-  padding:12px;
-  margin-bottom:14px;
-  border-radius:12px;
-  border:1px solid #ff3b3b55;
-  background:#1c0b0b;
-  color:#ffd9d9;
-  font-size:14px;
-}
-.modal button{
-  width:48%;
-  margin:0 1%;
-}
-.modal .error{ color:#ff6666; margin-top:6px; font-size:13px; }
+body{margin:0;background:radial-gradient(circle at top,#2a0a0a,#090202);min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;color:#ffeaea;}
+.panel{width:420px;padding:28px;border-radius:24px;background:linear-gradient(180deg,#3d0f0f,#120303);box-shadow:0 0 50px rgba(255,0,0,.45);border:2px solid rgba(255,0,0,.25);}
+h1{text-align:center;font-family:'Orbitron',sans-serif;font-size:28px;letter-spacing:2px;color:#ff3b3b;text-shadow:0 0 8px #ff0000;}
+.clock{text-align:center;font-family:'Orbitron',sans-serif;font-size:18px;margin:12px 0 24px;color:#ff7f7f;}
+label{font-size:12px;opacity:.8;}
+select{width:100%;padding:14px;margin:10px 0 18px;background:#2b0c0c;border:1px solid #ff3b3b55;border-radius:14px;color:#ffd9d9;}
+button{width:48%;padding:16px;border:none;border-radius:20px;background:linear-gradient(90deg,#ff3b3b,#ff0000);font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 0 25px rgba(255,0,0,.75);}
+.signal{margin-top:24px;padding:22px;border-radius:18px;background:#2a0a0a;border:2px solid rgba(255,0,0,.35);display:none;}
+.signal-card{background:#1c0b0b;border-radius:16px;padding:18px;box-shadow:0 0 20px rgba(255,0,0,.4);font-size:14px;line-height:1.6;white-space:pre-line;}
+.footer{text-align:center;margin-top:18px;font-size:11px;opacity:.6;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+.modal{background:#2a0a0a;padding:24px;border-radius:16px;width:300px;border:2px solid #ff3b3b;text-align:center;}
+.modal input{width:100%;padding:12px;margin-bottom:12px;border-radius:12px;background:#1c0b0b;border:1px solid #ff3b3b55;color:#ffd9d9;}
+.modal .error{color:#ff6666;font-size:13px;}
+.hacker{font-family:'Orbitron',monospace;}
+.flash{animation: flash 1s infinite;}
+@keyframes flash{0%{box-shadow:0 0 10px #00ff9c}50%{box-shadow:0 0 30px #00ff9c}100%{box-shadow:0 0 10px #00ff9c}}
 </style>
 </head>
 
@@ -164,17 +39,9 @@ button:hover{
   <select id="pair">
     <option>USD/INR (OTC)</option>
     <option>USD/BRL (OTC)</option>
-    <option>NZD/CAD (OTC)</option>
-    <option>USD/DZD (OTC)</option>
-    <option>NZD/JPY (OTC)</option>
-    <option>GBP/NZD (OTC)</option>
-    <option>USD/ARS (OTC)</option>
-    <option>USD/TRY (OTC)</option>
-    <option>USD/COP (OTC)</option>
-    <option>USD/PHP (OTC)</option>
-    <option>NZD/CHF (OTC)</option>
-    <option>USD/EGP (OTC)</option>
     <option>USD/MXN (OTC)</option>
+    <option>NZD/JPY (OTC)</option>
+    <option>USD/TRY (OTC)</option>
   </select>
 
   <label>Strategy</label>
@@ -183,27 +50,24 @@ button:hover{
     <option>Fractal Bear</option>
   </select>
 
-  <div style="display:flex; justify-content:space-between;">
-    <button onclick="openModal()">GENERATE SIGNAL</button>
+  <div style="display:flex;justify-content:space-between;">
+    <button onclick="openModal()">GENERATE</button>
     <button onclick="resetSignal()">RESET</button>
   </div>
 
   <div class="signal" id="signalBox">
     <div class="signal-card" id="message"></div>
-    <div class="timer" id="timer"></div>
   </div>
 
-  <div class="footer">
-    © Powered by <span>Quotex Signal Engine</span>
-  </div>
+  <div class="footer">© Powered by Quotex Signal Engine</div>
 </div>
 
 <!-- Modal -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h2>🔒 Enter Verification Code</h2>
-    <input type="password" id="codeInput" placeholder="Enter code...">
-    <div style="display:flex; justify-content:space-between;">
+    <h3 style="color:#ff3b3b;">🔒 Verification</h3>
+    <input type="password" id="codeInput" placeholder="Enter code">
+    <div style="display:flex;justify-content:space-between;">
       <button onclick="submitCode()">Submit</button>
       <button onclick="closeModal()">Cancel</button>
     </div>
@@ -212,95 +76,71 @@ button:hover{
 </div>
 
 <script>
-let cooldown = false;
-let countdownInterval;
-const verifyCode = "105";
+const verifyCode="105";
 
 function updateClock(){
-  document.getElementById("clock").innerText =
-    new Date().toLocaleTimeString("en-US",{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  clock.innerText=new Date().toLocaleTimeString("en-US",{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
-setInterval(updateClock,1000); updateClock();
+setInterval(updateClock,1000);updateClock();
 
-// Modal functions
 function openModal(){
-  document.getElementById("modalBg").style.display = "flex";
-  document.getElementById("codeInput").value = "";
-  document.getElementById("modalError").innerText = "";
+  modalBg.style.display="flex";
+  codeInput.value="";
+  modalError.innerText="";
 }
-function closeModal(){
-  document.getElementById("modalBg").style.display = "none";
-}
+function closeModal(){modalBg.style.display="none";}
 function submitCode(){
-  const input = document.getElementById("codeInput").value;
-  if(input === verifyCode){
-    closeModal();
-    generateSignal();
-  } else {
-    document.getElementById("modalError").innerText = "❌ Incorrect code!";
-  }
+  if(codeInput.value===verifyCode){
+    closeModal();generateSignal();
+  }else modalError.innerText="❌ Invalid Code";
 }
 
+// -------------------- Generate Signal --------------------
 function generateSignal(){
-  if(cooldown){
-    alert("⏳ Wait until current 5-minute session ends to generate next signal!");
-    return;
-  }
-
   const pair = document.getElementById("pair").value;
   const strategy = document.getElementById("strategy").value;
-  const msgBox = document.getElementById("message");
-  const timerBox = document.getElementById("timer");
+  const box = document.getElementById("message");
 
-  if(Math.random() < 0.25){
-    msgBox.innerHTML = `⚠️ Market conditions are currently unstable.<br>Please consider another asset pair for safer trading.`;
-    msgBox.className = "warning";
-  } else {
-    let signalType = (strategy === "Fractal Bull") ? "BUY" : "SELL";
-    let conditionText = (strategy === "Fractal Bull") 
-      ? "Long Lower Shadow Green Candle<br>(Within next 5 candles)" 
-      : "Long Upper Shadow Red Candle<br>(Within next 5 candles)";
+  // Random 2-3 min gap
+  const gap = Math.random()<0.5?2:3;
+  const entry = new Date();
+  entry.setMinutes(entry.getMinutes() + gap);
+  const time = entry.toLocaleTimeString("en-US",{hour:'2-digit',minute:'2-digit'});
+  const action = (strategy==="Fractal Bull")?"BUY":"SELL";
 
-    msgBox.innerHTML = `
-      🔔 <b>FRACTAL PREMIUM SIGNAL</b><br><br>
-      💱 <b>Pair:</b> ${pair}<br>
-      ➡️ <span class="${signalType==="BUY"?"buy":"sell"}">${signalType}</span><br><br>
-      ⏱ <b>Expiry:</b> 1 Minute<br><br>
-      📌 <b>Condition:</b><br><i>${conditionText}</i><br><br>
-      ✅ <b>Confirmation:</b><br>Rejection + ${signalType==="BUY"?"Bullish":"Bearish"} Momentum
-    `;
-    msgBox.className = "signal-card";
-  }
+  const text=`⚡ FRACTAL LOGIC
+💱 ${pair}
+⏰ Time: ${time}
+⏳ Expiry: 1m
 
-  document.getElementById("signalBox").style.display = "block";
+📊 ${strategy}
+🚀 ${action}`;
 
-  cooldown = true;
-  let remaining = 5 * 60; 
-  timerBox.innerText = `Next signal available in: ${formatTime(remaining)}`;
+  typeWriter(box,text.trim(),18);
+  document.getElementById("signalBox").style.display="block";
 
-  countdownInterval = setInterval(()=>{
-    remaining--;
-    if(remaining <= 0){
-      clearInterval(countdownInterval);
-      timerBox.innerText = `✅ You can generate a new signal now.`;
-      cooldown = false;
-    } else {
-      timerBox.innerText = `Next signal available in: ${formatTime(remaining)}`;
-    }
-  },1000);
+  // Flash alert 5 sec before entry
+  const delay = (gap*60 - 5)*1000;
+  setTimeout(()=>box.classList.add("flash"),delay);
+}
+
+// -------------------- Typing Effect --------------------
+function typeWriter(el,text,speed){
+  el.innerHTML="";
+  el.className="signal-card hacker";
+  let i=0;
+  const t=setInterval(()=>{
+    el.innerHTML+=text.charAt(i);
+    i++;
+    if(i>=text.length) clearInterval(t);
+  },speed);
 }
 
 function resetSignal(){
-  cooldown = false;
-  clearInterval(countdownInterval);
-  document.getElementById("signalBox").style.display = "none";
-  document.getElementById("timer").innerText = "";
-}
-
-function formatTime(sec){
-  let m = Math.floor(sec/60);
-  let s = sec % 60;
-  return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+  const box=document.getElementById("message");
+  box.innerHTML="";
+  box.className="signal-card";
+  document.getElementById("signalBox").style.display="none";
 }
 </script>
 
