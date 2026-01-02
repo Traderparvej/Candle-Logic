@@ -20,7 +20,7 @@ body{
   color:#fff;
 }
 .panel{
-  width:450px;
+  width:460px;
   padding:26px;
   border-radius:24px;
   background:linear-gradient(180deg,#2a0f0f,#100303);
@@ -145,7 +145,7 @@ button{
 
 <div class="form-grid">
   <div class="form-group">
-    <label>Broker</label>
+    <label>Platform</label>
     <select id="broker">
       <option>Quotex</option>
       <option>Pocket Option</option>
@@ -164,7 +164,7 @@ button{
     <select id="pair"></select>
   </div>
   <div class="form-group">
-    <label>Time Frame</label>
+    <label>Timeframe</label>
     <select id="timeFrame">
       <option>1 Minute</option>
       <option>2 Minute</option>
@@ -172,14 +172,14 @@ button{
     </select>
   </div>
   <div class="form-group">
-    <label>Time Mode</label>
+    <label>Time Zone</label>
     <select>
-      <option>BDT (GMT +6)</option>
+      <option>BDT (UTC +6)</option>
     </select>
   </div>
   <div class="form-group full">
     <label>Number of Signals</label>
-    <input type="number" id="signalCount" placeholder="1 - 20" min="1" max="20">
+    <input type="number" id="signalCount" min="1" max="20" placeholder="1 - 20">
   </div>
 </div>
 
@@ -189,27 +189,28 @@ button{
 </div>
 
 <div class="signal" id="signalBox"></div>
-<button class="copy-btn" onclick="copySignal()" id="copyBtn" style="display:none;">Copy All</button>
+<button class="copy-btn" id="copyBtn" onclick="copySignal()" style="display:none;">Copy All</button>
 
 <div class="footer">© Powered by Quotex Signal Engine</div>
 </div>
 
 <div class="modal-bg" id="modalBg">
-<div class="modal">
-<h3 style="color:#ff3b3b;">🔒 Verification</h3>
-<input type="password" id="codeInput" placeholder="Enter code">
-<div style="display:flex;justify-content:space-between;">
-<button onclick="submitCode()">Submit</button>
-<button onclick="closeModal()">Cancel</button>
-</div>
-<div class="error" id="modalError"></div>
-</div>
+  <div class="modal">
+    <h3 style="color:#ff3b3b;">🔒 Verification</h3>
+    <input type="password" id="codeInput" placeholder="Enter code">
+    <div style="display:flex;justify-content:space-between;">
+      <button onclick="submitCode()">Submit</button>
+      <button onclick="closeModal()">Cancel</button>
+    </div>
+    <div class="error" id="modalError"></div>
+  </div>
 </div>
 
 <script>
 const verifyCode="105";
+
 const realPairs=["EUR/USD","GBP/USD","USD/JPY","USD/CHF","AUD/USD","USD/CAD","EUR/JPY","GBP/JPY","EUR/GBP"];
-const otcPairs=["USD/BRL (OTC)","GBP/NZD (OTC)","NZD/JPY (OTC)","USD/IDR (OTC)","USD/BDT (OTC)","USD/INR (OTC)","USD/PHP (OTC)","NZD/CAD (OTC)","AUD/NZD (OTC)","USD/ARS (OTC)","CAD/CHF (OTC)","USD/PKR (OTC)","USD/EGP (OTC)","USD/MXN (OTC)","USD/TRY (OTC)","EUR/NZD (OTC)","NZD/CHF (OTC)","USD/COP (OTC)","USD/DZD (OTC)","USD/NGN (OTC)","USD/ZAR (OTC)","NZD/USD (OTC)"];
+const otcPairs=["USD/INR (OTC)","USD/BDT (OTC)","USD/PKR (OTC)","USD/BRL (OTC)","NZD/USD (OTC)","AUD/NZD (OTC)"];
 
 function updatePairs(){
   const mode=document.getElementById("marketMode").value;
@@ -223,23 +224,15 @@ function updatePairs(){
 }
 updatePairs();
 
-// Clock update
+// Clock
 function updateClock(){
-  const now = new Date(); // local system time
-  const h = now.getHours().toString().padStart(2,'0');
-  const m = now.getMinutes().toString().padStart(2,'0');
-  const s = now.getSeconds().toString().padStart(2,'0');
-  document.getElementById("clock").innerText = `${h}:${m}:${s}`;
+  const n=new Date();
+  clock.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
 }
-setInterval(updateClock,1000);
-updateClock();
+setInterval(updateClock,1000);updateClock();
 
-// Modal functions
-function openModal(){
-  modalBg.style.display="flex";
-  modalError.innerText="";
-  codeInput.value="";
-}
+// Modal
+function openModal(){modalBg.style.display="flex";modalError.innerText="";codeInput.value="";}
 function closeModal(){modalBg.style.display="none";}
 function submitCode(){
   if(codeInput.value!==verifyCode){
@@ -250,45 +243,55 @@ function submitCode(){
   generateSignal();
 }
 
-// Signal generation
+// Signal Generator
 function generateSignal(){
   const count=parseInt(signalCount.value);
-  if(!count||count<1||count>20){alert("Enter 1-20"); return;}
-  const broker=document.getElementById("broker").value;
-  const mm=document.getElementById("timeFrame").value;
-  const pair=document.getElementById("pair").value;
+  if(!count||count<1||count>20){alert("Enter 1-20");return;}
 
-  const now = new Date(); // local BDT time
-  const dateStr=`🎇 ${now.getDate().toString().padStart(2,'0')}.${(now.getMonth()+1).toString().padStart(2,'0')}.${now.getFullYear()} | UTC +6 (Dhaka)`;
-  const header=`📊 ${broker} | MM: ${mm}\n\n📌 Rule: Trade opposite of previous Fractal\n\n`;
+  const broker=brokerSelect.value=broker.value;
+  const tf=timeFrame.value;
+  const pair=pairSelect?.value || pair.value;
+
+  const now=new Date();
+  const dateStr=`🎇 ${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()} | UTC +6 (Dhaka)`;
+
+  let header=
+`📊 Platform: ${broker}
+⏱ Timeframe: ${tf}
+
+📌 Rule: 1-Step Martingale (Safety Try)
+
+📍 Signals – ${pair}:
+`;
+
+  let actions=[];
+  for(let i=0;i<count;i++){actions.push(i%2===0?"BUY":"PUT");}
+  actions.sort(()=>Math.random()-0.5);
 
   let body="";
-  let currentTime = new Date(now.getTime()); // start from current time
-  for(let i=0;i<count;i++){
-    const gap=Math.floor(Math.random()*3)+2; // 2-4 min gap
-    currentTime.setMinutes(currentTime.getMinutes() + gap);
+  let t=new Date(now.getTime());
 
-    let h=currentTime.getHours().toString().padStart(2,'0');
-    let m=currentTime.getMinutes().toString().padStart(2,'0');
-    body+=`〆${h}:${m}: ${pair}\n`;
+  for(let i=0;i<count;i++){
+    const gap=Math.floor(Math.random()*5)+4; // 4–8 min
+    t.setMinutes(t.getMinutes()+gap);
+    body+=`〆 ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${actions[i]}\n`;
   }
 
-  body+="\n🚫 Avoid: Doji • Gap • Low Payout";
+  body+=`\n🚫 Avoid: Doji Candle • Gap Market • Low Payout`;
 
   signalBox.style.display="block";
-  signalBox.innerText=dateStr+"\n"+header+body;
-  document.getElementById("copyBtn").style.display="block";
+  signalBox.innerText=`${dateStr}\n${header}${body}`;
+  copyBtn.style.display="block";
 }
 
-// Reset & Copy
 function resetSignal(){
-  signalBox.innerHTML="";
   signalBox.style.display="none";
-  document.getElementById("copyBtn").style.display="none";
+  signalBox.innerText="";
+  copyBtn.style.display="none";
 }
 function copySignal(){
-  const text=signalBox.innerText;
-  navigator.clipboard.writeText(text).then(()=>alert("Signal copied!"));
+  navigator.clipboard.writeText(signalBox.innerText);
+  alert("Signal copied!");
 }
 </script>
 </body>
