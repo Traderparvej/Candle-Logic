@@ -226,7 +226,8 @@ updatePairs();
 // Clock
 function updateClock(){
   const now = new Date();
-  document.getElementById("clock").innerText = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  document.getElementById("clock").innerText =
+    `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -239,7 +240,7 @@ function submitCode(){
   closeModal(); generateSignal();
 }
 
-// Signal generation - updated per your comment
+// Signal generation
 function generateSignal(){
   const count=parseInt(signalCount.value);
   if(!count||count<1||count>20){alert("Enter 1-20"); return;}
@@ -251,7 +252,7 @@ function generateSignal(){
   const now=new Date();
   const dateStr=`🎇 ${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()} | UTC +6 (Dhaka)`;
 
-  const header = 
+  const header =
 `📊 Platform: ${broker}
 ⏱ Timeframe: ${tf}
 
@@ -260,7 +261,6 @@ function generateSignal(){
 📍 Signals – ${pair}:
 `;
 
-  // BUY / PUT balanced random
   let actions=[];
   for(let i=0;i<count;i++){actions.push(i%2===0?"BUY":"PUT");}
   actions.sort(()=>Math.random()-0.5);
@@ -269,7 +269,7 @@ function generateSignal(){
   let currentTime=new Date(now.getTime());
 
   for(let i=0;i<count;i++){
-    const gap=Math.floor(Math.random()*5)+4; // 4–8 min
+    const gap = Math.floor(Math.random() * 6) + 3; // ✅ RANDOM 3–8 MIN
     currentTime.setMinutes(currentTime.getMinutes()+gap);
     const h=String(currentTime.getHours()).padStart(2,'0');
     const m=String(currentTime.getMinutes()).padStart(2,'0');
@@ -284,8 +284,15 @@ function generateSignal(){
 }
 
 // Reset & Copy
-function resetSignal(){signalBox.innerHTML=""; signalBox.style.display="none"; document.getElementById("copyBtn").style.display="none";}
-function copySignal(){navigator.clipboard.writeText(signalBox.innerText).then(()=>alert("Signal copied!"));}
+function resetSignal(){
+  signalBox.innerHTML="";
+  signalBox.style.display="none";
+  document.getElementById("copyBtn").style.display="none";
+}
+function copySignal(){
+  navigator.clipboard.writeText(signalBox.innerText)
+    .then(()=>alert("Signal copied!"));
+}
 </script>
 </body>
 </html>
