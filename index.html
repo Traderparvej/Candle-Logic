@@ -173,7 +173,7 @@ button{
 
   <div class="form-group full">
     <label>Number of Signals</label>
-    <input type="number" id="signalCount" min="1" max="20">
+    <input type="number" id="signalCount" placeholder="1 - 20" min="1" max="20">
   </div>
 </div>
 
@@ -189,7 +189,7 @@ button{
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h3 style="color:#ff3b3b;">🔒 Verification</h3>
-    <input type="password" id="codeInput">
+    <input type="password" id="codeInput" placeholder="Enter code">
     <button onclick="submitCode()">Submit</button>
     <div class="error" id="modalError"></div>
   </div>
@@ -198,11 +198,11 @@ button{
 <script>
 const verifyCode="105";
 
-/* ✅ FULL PAIR LIST — NOTHING REMOVED */
+/* FULL PAIR LIST */
 const realPairs=[
-"EUR/JPY","USD/JPY","CAD/JPY","EUR/USD","GBP/USD","AUD/JPY",
-"GBP/CAD","USD/CAD","AUD/CAD","AUD/USD","GBP/AUD","GBP/JPY",
-"USD/CHF","EUR/GBP"
+"EUR/JPY","USD/JPY","CAD/JPY","NZD/USD (OTC)","EUR/USD","GBP/USD",
+"AUD/JPY","GBP/CAD","USD/CAD","AUD/CAD","AUD/USD","GBP/AUD",
+"GBP/JPY","USD/CHF","EUR/GBP"
 ];
 
 const otcPairs=[
@@ -211,7 +211,7 @@ const otcPairs=[
 "AUD/NZD (OTC)","USD/ARS (OTC)","CAD/CHF (OTC)","USD/PKR (OTC)",
 "USD/EGP (OTC)","USD/MXN (OTC)","USD/TRY (OTC)","EUR/NZD (OTC)",
 "NZD/CHF (OTC)","USD/COP (OTC)","USD/DZD (OTC)","USD/NGN (OTC)",
-"USD/ZAR (OTC)","NZD/USD (OTC)"
+"USD/ZAR (OTC)"
 ];
 
 function updatePairs(){
@@ -224,46 +224,70 @@ function updatePairs(){
 }
 updatePairs();
 
+/* Clock */
 setInterval(()=>{
   const n=new Date();
   clock.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
 },1000);
 
-function openModal(){modalBg.style.display="flex";modalError.innerText="";}
+/* Modal */
+function openModal(){modalBg.style.display="flex";modalError.innerText="";codeInput.value="";}
 function submitCode(){
-  if(codeInput.value!==verifyCode){modalError.innerText="Invalid Code";return;}
-  modalBg.style.display="none";generateSignal();
+  if(codeInput.value!==verifyCode){modalError.innerText="❌ Invalid Code";return;}
+  modalBg.style.display="none";
+  generateSignal();
 }
 
+/* SIGNAL GENERATION — ORIGINAL OUTPUT STYLE */
 function generateSignal(){
-  const count=+signalCount.value;
-  if(!count)return;
+  const count=parseInt(signalCount.value);
+  if(!count||count<1||count>20){alert("Enter 1-20");return;}
 
   const brokerName=broker.value;
   const tf=timeFrame.value;
   const pairName=pair.value;
   const mode=signalMode.value;
 
+  const now=new Date();
+  const dateStr=`🎇 ${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()} | UTC +6 (Dhaka)`;
+
+  const header=
+`📊 Platform: ${brokerName}
+⏱ Timeframe: ${tf}
+
+📌 Rule: 1-Step Martingale (Safety Try)
+
+📍 Signals – ${pairName}:
+`;
+
   let actions=[];
   if(mode==="CALL") actions=Array(count).fill("BUY");
   else if(mode==="PUT") actions=Array(count).fill("PUT");
-  else for(let i=0;i<count;i++) actions.push(i%2?"PUT":"BUY");
+  else{
+    for(let i=0;i<count;i++) actions.push(i%2===0?"BUY":"PUT");
+    actions.sort(()=>Math.random()-0.5);
+  }
 
-  let t=new Date();
-  let out="";
-  actions.forEach(a=>{
-    t.setMinutes(t.getMinutes()+Math.floor(Math.random()*6)+3);
-    out+=`〆 ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${a}\n`;
-  });
+  let body="";
+  let t=new Date(now);
+
+  for(let i=0;i<count;i++){
+    const gap=Math.floor(Math.random()*6)+3; // 3–8 min
+    t.setMinutes(t.getMinutes()+gap);
+    body+=`〆 ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${actions[i]}\n`;
+  }
+
+  body+=`\n🚫 Avoid: Doji Candle • Gap Market • Low Payout`;
 
   signalBox.style.display="block";
-  signalBox.innerText=`📊 Platform: ${brokerName}\n⏱ Timeframe: ${tf}\n📍 Pair: ${pairName}\n\n${out}`;
+  signalBox.innerText=`${dateStr}\n${header}${body}`;
   copyBtn.style.display="block";
 }
 
 function resetSignal(){
   signalBox.style.display="none";
   copyBtn.style.display="none";
+  signalBox.innerText="";
 }
 function copySignal(){
   navigator.clipboard.writeText(signalBox.innerText);
