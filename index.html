@@ -47,18 +47,9 @@ h1{
   grid-template-columns:1fr 1fr;
   gap:14px;
 }
-.form-group{
-  display:flex;
-  flex-direction:column;
-}
-.form-group.full{
-  grid-column:1 / -1;
-}
-label{
-  font-size:11px;
-  opacity:.85;
-  margin-bottom:4px;
-}
+.form-group{display:flex;flex-direction:column;}
+.form-group.full{grid-column:1/-1;}
+label{font-size:11px;opacity:.85;margin-bottom:4px;}
 select,input{
   padding:13px;
   background:#2b0c0c;
@@ -88,11 +79,16 @@ button{
   white-space:pre-line;
   font-size:14px;
 }
-.footer{
-  text-align:center;
-  margin-top:16px;
-  font-size:11px;
-  opacity:.6;
+.copy-btn{
+  margin-top:10px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:18px;
+  background:#00ff9c;
+  color:#000;
+  font-weight:700;
+  cursor:pointer;
 }
 .modal-bg{
   display:none;
@@ -120,28 +116,14 @@ button{
   border:1px solid #ff3b3b55;
   color:#ffd9d9;
 }
-.modal .error{
-  color:#ff6666;
-  font-size:13px;
-}
-.copy-btn{
-  margin-top:10px;
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:18px;
-  background:#00ff9c;
-  color:#000;
-  font-weight:700;
-  cursor:pointer;
-}
+.modal .error{color:#ff6666;font-size:13px;}
 </style>
 </head>
 
 <body>
 <div class="panel">
 <h1>FRACTAL LOGIC</h1>
-<div class="clock" id="clock">--:--:--</div>
+<div class="clock" id="clock"></div>
 
 <div class="form-grid">
   <div class="form-group">
@@ -152,6 +134,7 @@ button{
       <option>Binomo</option>
     </select>
   </div>
+
   <div class="form-group">
     <label>Market Mode</label>
     <select id="marketMode" onchange="updatePairs()">
@@ -176,12 +159,9 @@ button{
 
   <div class="form-group">
     <label>Time Mode</label>
-    <select>
-      <option>BDT (GMT +6)</option>
-    </select>
+    <select><option>BDT (GMT +6)</option></select>
   </div>
 
-  <!-- ✅ NEW OPTION -->
   <div class="form-group full">
     <label>Signal Mode</label>
     <select id="signalMode">
@@ -193,7 +173,7 @@ button{
 
   <div class="form-group full">
     <label>Number of Signals</label>
-    <input type="number" id="signalCount" placeholder="1 - 20" min="1" max="20">
+    <input type="number" id="signalCount" min="1" max="20">
   </div>
 </div>
 
@@ -203,95 +183,90 @@ button{
 </div>
 
 <div class="signal" id="signalBox"></div>
-<button class="copy-btn" onclick="copySignal()" id="copyBtn" style="display:none;">Copy All</button>
-
-<div class="footer">© Powered by Quotex Signal Engine</div>
+<button class="copy-btn" id="copyBtn" onclick="copySignal()" style="display:none;">Copy All</button>
 </div>
 
 <div class="modal-bg" id="modalBg">
-<div class="modal">
-<h3 style="color:#ff3b3b;">🔒 Verification</h3>
-<input type="password" id="codeInput" placeholder="Enter code">
-<div style="display:flex;justify-content:space-between;">
-<button onclick="submitCode()">Submit</button>
-<button onclick="closeModal()">Cancel</button>
-</div>
-<div class="error" id="modalError"></div>
-</div>
+  <div class="modal">
+    <h3 style="color:#ff3b3b;">🔒 Verification</h3>
+    <input type="password" id="codeInput">
+    <button onclick="submitCode()">Submit</button>
+    <div class="error" id="modalError"></div>
+  </div>
 </div>
 
 <script>
 const verifyCode="105";
 
-const realPairs=["EUR/USD","GBP/USD","USD/JPY","USD/CHF","AUD/USD","USD/CAD","EUR/JPY","GBP/JPY","EUR/GBP"];
-const otcPairs=["USD/BRL (OTC)","GBP/NZD (OTC)","NZD/JPY (OTC)","USD/IDR (OTC)","USD/BDT (OTC)","USD/INR (OTC)","USD/PHP (OTC)","NZD/CAD (OTC)","AUD/NZD (OTC)","USD/ARS (OTC)","CAD/CHF (OTC)","USD/PKR (OTC)","USD/EGP (OTC)","USD/MXN (OTC)","USD/TRY (OTC)","EUR/NZD (OTC)","NZD/CHF (OTC)","USD/COP (OTC)","USD/DZD (OTC)","USD/NGN (OTC)","USD/ZAR (OTC)","NZD/USD (OTC)"];
+/* ✅ FULL PAIR LIST — NOTHING REMOVED */
+const realPairs=[
+"EUR/JPY","USD/JPY","CAD/JPY","EUR/USD","GBP/USD","AUD/JPY",
+"GBP/CAD","USD/CAD","AUD/CAD","AUD/USD","GBP/AUD","GBP/JPY",
+"USD/CHF","EUR/GBP"
+];
+
+const otcPairs=[
+"USD/BRL (OTC)","GBP/NZD (OTC)","NZD/JPY (OTC)","USD/IDR (OTC)",
+"USD/BDT (OTC)","USD/INR (OTC)","USD/PHP (OTC)","NZD/CAD (OTC)",
+"AUD/NZD (OTC)","USD/ARS (OTC)","CAD/CHF (OTC)","USD/PKR (OTC)",
+"USD/EGP (OTC)","USD/MXN (OTC)","USD/TRY (OTC)","EUR/NZD (OTC)",
+"NZD/CHF (OTC)","USD/COP (OTC)","USD/DZD (OTC)","USD/NGN (OTC)",
+"USD/ZAR (OTC)","NZD/USD (OTC)"
+];
 
 function updatePairs(){
-  const mode=document.getElementById("marketMode").value;
-  const sel=document.getElementById("pair");
-  sel.innerHTML="";
-  (mode==="REAL"?realPairs:otcPairs).forEach(p=>{
+  pair.innerHTML="";
+  (marketMode.value==="REAL"?realPairs:otcPairs).forEach(p=>{
     const o=document.createElement("option");
     o.textContent=p;
-    sel.appendChild(o);
+    pair.appendChild(o);
   });
 }
 updatePairs();
 
-function updateClock(){
-  const now=new Date();
-  clock.innerText=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-}
-setInterval(updateClock,1000);updateClock();
+setInterval(()=>{
+  const n=new Date();
+  clock.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+},1000);
 
-function openModal(){modalBg.style.display="flex";modalError.innerText="";codeInput.value="";}
-function closeModal(){modalBg.style.display="none";}
+function openModal(){modalBg.style.display="flex";modalError.innerText="";}
 function submitCode(){
-  if(codeInput.value!==verifyCode){modalError.innerText="❌ Invalid Code";return;}
-  closeModal();generateSignal();
+  if(codeInput.value!==verifyCode){modalError.innerText="Invalid Code";return;}
+  modalBg.style.display="none";generateSignal();
 }
 
 function generateSignal(){
-  const count=parseInt(signalCount.value);
-  if(!count||count<1||count>20){alert("Enter 1-20");return;}
+  const count=+signalCount.value;
+  if(!count)return;
 
-  const broker=brokerSelect=broker.value;
+  const brokerName=broker.value;
   const tf=timeFrame.value;
   const pairName=pair.value;
-  const mode=document.getElementById("signalMode").value;
-
-  const now=new Date();
-  const dateStr=`🎇 ${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()} | UTC +6 (Dhaka)`;
+  const mode=signalMode.value;
 
   let actions=[];
-  if(mode==="CALL"){actions=Array(count).fill("BUY");}
-  else if(mode==="PUT"){actions=Array(count).fill("PUT");}
-  else{
-    for(let i=0;i<count;i++)actions.push(i%2===0?"BUY":"PUT");
-    actions.sort(()=>Math.random()-0.5);
-  }
+  if(mode==="CALL") actions=Array(count).fill("BUY");
+  else if(mode==="PUT") actions=Array(count).fill("PUT");
+  else for(let i=0;i<count;i++) actions.push(i%2?"PUT":"BUY");
 
-  let body="";
-  let t=new Date(now);
-  for(let i=0;i<count;i++){
+  let t=new Date();
+  let out="";
+  actions.forEach(a=>{
     t.setMinutes(t.getMinutes()+Math.floor(Math.random()*6)+3);
-    body+=`〆 ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${actions[i]}\n`;
-  }
-
-  body+="\n🚫 Avoid: Doji Candle • Gap Market • Low Payout";
+    out+=`〆 ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${a}\n`;
+  });
 
   signalBox.style.display="block";
-  signalBox.innerText=`${dateStr}\n📊 Platform: ${broker}\n⏱ Timeframe: ${tf}\n\n📌 Rule: 1-Step Martingale (Safety Try)\n\n📍 Signals – ${pairName}:\n${body}`;
+  signalBox.innerText=`📊 Platform: ${brokerName}\n⏱ Timeframe: ${tf}\n📍 Pair: ${pairName}\n\n${out}`;
   copyBtn.style.display="block";
 }
 
 function resetSignal(){
   signalBox.style.display="none";
   copyBtn.style.display="none";
-  signalBox.innerText="";
 }
 function copySignal(){
-  navigator.clipboard.writeText(signalBox.innerText).then(()=>alert("Signal copied!"));
+  navigator.clipboard.writeText(signalBox.innerText);
 }
 </script>
 </body>
