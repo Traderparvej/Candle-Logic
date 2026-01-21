@@ -20,7 +20,7 @@ body{
   color:#fff;
 }
 .panel{
-  width:450px;
+  width:470px;
   padding:26px;
   border-radius:24px;
   background:linear-gradient(180deg,#2a0f0f,#100303);
@@ -151,9 +151,9 @@ button{
   <div class="form-group">
     <label>Time Frame</label>
     <select id="timeFrame">
-      <option>1 Minute</option>
-      <option>2 Minute</option>
-      <option>5 Minute</option>
+      <option value="1">1 Minute</option>
+      <option value="2">2 Minute</option>
+      <option value="5">5 Minute</option>
     </select>
   </div>
 
@@ -198,25 +198,39 @@ button{
 <script>
 const verifyCode="105";
 
+/* DOM Elements */
+const pair = document.getElementById("pair");
+const marketMode = document.getElementById("marketMode");
+const broker = document.getElementById("broker");
+const timeFrame = document.getElementById("timeFrame");
+const signalMode = document.getElementById("signalMode");
+const signalCount = document.getElementById("signalCount");
+const signalBox = document.getElementById("signalBox");
+const copyBtn = document.getElementById("copyBtn");
+const modalBg = document.getElementById("modalBg");
+const modalError = document.getElementById("modalError");
+const codeInput = document.getElementById("codeInput");
+
 /* FULL PAIR LIST */
 const realPairs=[
-"EUR/JPY","USD/JPY","CAD/JPY","NZD/USD (OTC)","EUR/USD","GBP/USD",
+"EUR/JPY","USD/JPY","CAD/JPY","NZD/USD","EUR/USD","GBP/USD",
 "AUD/JPY","GBP/CAD","USD/CAD","AUD/CAD","AUD/USD","GBP/AUD",
 "GBP/JPY","USD/CHF","EUR/GBP"
 ];
 
 const otcPairs=[
-"USD/BRL (OTC)","GBP/NZD (OTC)","NZD/JPY (OTC)","USD/IDR (OTC)",
-"USD/BDT (OTC)","USD/INR (OTC)","USD/PHP (OTC)","NZD/CAD (OTC)",
-"AUD/NZD (OTC)","USD/ARS (OTC)","CAD/CHF (OTC)","USD/PKR (OTC)",
-"USD/EGP (OTC)","USD/MXN (OTC)","USD/TRY (OTC)","EUR/NZD (OTC)",
-"NZD/CHF (OTC)","USD/COP (OTC)","USD/DZD (OTC)","USD/NGN (OTC)",
-"USD/ZAR (OTC)"
+"USD/BRL_otc","GBP/NZD_otc","NZD/JPY_otc","USD/IDR_otc",
+"USD/BDT_otc","USD/INR_otc","USD/PHP_otc","NZD/CAD_otc",
+"AUD/NZD_otc","USD/ARS_otc","CAD/CHF_otc","USD/PKR_otc",
+"USD/EGP_otc","USD/MXN_otc","USD/TRY_otc","EUR/NZD_otc",
+"NZD/CHF_otc","USD/COP_otc","USD/DZD_otc","USD/NGN_otc",
+"USD/ZAR_otc"
 ];
 
 function updatePairs(){
   pair.innerHTML="";
-  (marketMode.value==="REAL"?realPairs:otcPairs).forEach(p=>{
+  const list = marketMode.value==="REAL"?realPairs:otcPairs;
+  list.forEach(p=>{
     const o=document.createElement("option");
     o.textContent=p;
     pair.appendChild(o);
@@ -231,56 +245,68 @@ setInterval(()=>{
 },1000);
 
 /* Modal */
-function openModal(){modalBg.style.display="flex";modalError.innerText="";codeInput.value="";}
+function openModal(){
+  modalBg.style.display="flex";
+  modalError.innerText="";
+  codeInput.value="";
+  codeInput.focus();
+}
 function submitCode(){
-  if(codeInput.value!==verifyCode){modalError.innerText="❌ Invalid Code";return;}
+  if(codeInput.value!==verifyCode){
+    modalError.innerText="❌ Invalid Code";
+    return;
+  }
   modalBg.style.display="none";
   generateSignal();
 }
 
-/* SIGNAL GENERATION — ORIGINAL OUTPUT STYLE */
+/* SIGNAL GENERATION — FINAL FORMAT */
 function generateSignal(){
-  const count=parseInt(signalCount.value);
-  if(!count||count<1||count>20){alert("Enter 1-20");return;}
+  const count = parseInt(signalCount.value);
+  if(!count || count<1 || count>20){alert("Enter 1-20"); return;}
 
-  const brokerName=broker.value;
-  const tf=timeFrame.value;
-  const pairName=pair.value;
-  const mode=signalMode.value;
+  const brokerName = broker.value;
+  const tf = timeFrame.value + "M";
+  const pairName = pair.value;
+  const mode = signalMode.value;
 
-  const now=new Date();
-  const dateStr=`🎇 ${String(now.getDate()).padStart(2,'0')}.${String(now.getMonth()+1).padStart(2,'0')}.${now.getFullYear()} | UTC +6 (Dhaka)`;
+  const now = new Date();
+  const dateStr = `DATE: ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+  const utcStr = `UTC: +06:00`;
 
-  const header=
-`📊 Platform: ${brokerName}
-⏱ Timeframe: ${tf}
+  const rules =
+`RULES:
+• Use 1 Step MTG
+• Avoid Gap Up/Down
+• Avoid Doji
+• Avoid Opposite Trend
+• Avoid Big Candle
+• Avoid Back-to-Back 3 Opsite Candle
 
-📌 Rule: 1-Step Martingale (Safety Try)
-
-📍 Signals – ${pairName}:
+TIME: ${timeFrame.value} Minute
 `;
 
-  let actions=[];
-  if(mode==="CALL") actions=Array(count).fill("BUY");
-  else if(mode==="PUT") actions=Array(count).fill("PUT");
+  let actions = [];
+  if(mode==="CALL") actions = Array(count).fill("CALL");
+  else if(mode==="PUT") actions = Array(count).fill("PUT");
   else{
-    for(let i=0;i<count;i++) actions.push(i%2===0?"BUY":"PUT");
+    for(let i=0;i<count;i++) actions.push(i%2===0?"CALL":"PUT");
     actions.sort(()=>Math.random()-0.5);
   }
 
-  let body="";
-  let t=new Date(now);
+  let body = "";
+  let t = new Date(now);
 
   for(let i=0;i<count;i++){
-    const gap=Math.floor(Math.random()*6)+3; // 3–8 min
+    const gap = Math.floor(Math.random()*5)+4; // 4–8 min random
     t.setMinutes(t.getMinutes()+gap);
-    body+=`〆 ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${actions[i]}\n`;
+    body += `${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${actions[i]}\n`;
   }
 
-  body+=`\n🚫 Avoid: Doji Candle • Gap Market • Low Payout`;
+  body += `\n⚡️Use Safety For Better Accuracy`;
 
   signalBox.style.display="block";
-  signalBox.innerText=`${dateStr}\n${header}${body}`;
+  signalBox.innerText = `${dateStr}\n${utcStr}\n\n${rules}${body}`;
   copyBtn.style.display="block";
 }
 
@@ -289,6 +315,7 @@ function resetSignal(){
   copyBtn.style.display="none";
   signalBox.innerText="";
 }
+
 function copySignal(){
   navigator.clipboard.writeText(signalBox.innerText);
 }
