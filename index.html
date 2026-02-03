@@ -259,16 +259,14 @@ TIME: ${timeFrame.value} Minute
     else if(signalMode.value==="PUT") action="PUT";
     else action = Math.random()<0.5?"CALL":"PUT";
 
-    const gap = Math.floor(Math.random()*3)+3; // 3-5 min
+    const gap = Math.floor(Math.random()*2)+3; // 3-4 min random gap
     t.setMinutes(t.getMinutes()+gap);
 
     body += `${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${action}\n`;
   }
 
-  // Add Safety Notice
-  body += `\n💡 USE SAFETY MARGIN FOR BETTER ACCURACY
-🎯 Profit Stop: 5% cumulative gain → Stop Trading ✅
-❌ Loss Stop: 5% cumulative loss → Stop Trading ❌`;
+  // Add ONLY Safety Notice
+  body += `\n💡 USE SAFETY MARGIN FOR BETTER ACCURACY`;
 
   signalBox.style.display="block";
   signalBox.innerText = `${dateStr}\n${utcStr}\n\n${rules}${body}`;
