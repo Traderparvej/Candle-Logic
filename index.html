@@ -207,11 +207,12 @@ setInterval(()=>{
   clock.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
 },1000);
 
-/* Modal Functions */
+/* Modal */
 function openModal(){
   modalBg.style.display="flex";
   modalError.innerText="";
   codeInput.value="";
+  codeInput.focus();
 }
 function submitCode(){
   if(codeInput.value!==verifyCode){
@@ -222,39 +223,55 @@ function submitCode(){
   generateSignal();
 }
 
-/* Signal Generator */
+/* SIGNAL GENERATION SERIAL */
 function generateSignal(){
-  const count=parseInt(signalCount.value);
-  const pairText=pairInput.value.trim();
+  const count = parseInt(signalCount.value);
+  const pairText = pairInput.value.trim();
   if(!pairText){alert("Enter at least one pair"); return;}
-  if(!count||count<1||count>20){alert("Enter 1-20"); return;}
+  if(!count || count<1 || count>20){alert("Enter 1-20"); return;}
 
-  const pairs=pairText.split(",").map(p=>p.trim());
-  const tf=timeFrame.value+"M";
+  const pairs = pairText.split(",").map(p=>p.trim());
+  const tf = timeFrame.value + "M";
+  const now = new Date();
 
-  let body="";
-  let now=new Date();
+  const dateStr = `DATE: ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+  const utcStr = `UTC: +06:00`;
+
+  const rules = 
+`RULES:
+• Use 1 Step MTG
+• Avoid Gap Up/Down
+• Avoid Doji
+• Avoid Opposite Trend
+• Avoid Big Candle
+• Avoid Back-to-Back 3 Opposite Candle
+
+TIME: ${timeFrame.value} Minute
+`;
+
+  let body = "";
+  let t = new Date(now); // start time
 
   pairs.forEach(pairName=>{
-    let actions=[];
-    if(signalMode.value==="CALL") actions=Array(count).fill("CALL");
-    else if(signalMode.value==="PUT") actions=Array(count).fill("PUT");
+    let actions = [];
+    if(signalMode.value==="CALL") actions = Array(count).fill("CALL");
+    else if(signalMode.value==="PUT") actions = Array(count).fill("PUT");
     else{
       for(let i=0;i<count;i++) actions.push(i%2===0?"CALL":"PUT");
       actions.sort(()=>Math.random()-0.5);
     }
 
-    let t=new Date(now);
+    // Serial signals per pair
     for(let i=0;i<count;i++){
-      const gap=Math.floor(Math.random()*3)+3; // 3-5 min
+      const gap = Math.floor(Math.random()*3)+3; // 3-5 min
       t.setMinutes(t.getMinutes()+gap);
-      body+=`${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${actions[i]}\n`;
+      body += `${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${actions[i]}\n`;
     }
-    body+="\n";
+    body += "\n"; // separate pairs
   });
 
   signalBox.style.display="block";
-  signalBox.innerText=body;
+  signalBox.innerText = `${dateStr}\n${utcStr}\n\n${rules}${body}`;
   copyBtn.style.display="block";
 }
 
