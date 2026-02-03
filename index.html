@@ -136,8 +136,8 @@ button{
   </div>
 
   <div class="form-group full">
-    <label>Asset Pair (Manual)</label>
-    <input type="text" id="pairInput" placeholder="USD/BRL_otc or EUR/JPY">
+    <label>Asset Pair(s) (Manual, comma-separated)</label>
+    <input type="text" id="pairInput" placeholder="USD/TRY_otc,USD/BRL_otc,EUR/JPY">
   </div>
 
   <div class="form-group">
@@ -225,26 +225,33 @@ function submitCode(){
 /* Signal Generator */
 function generateSignal(){
   const count=parseInt(signalCount.value);
-  const pairName=pairInput.value.trim();
-  if(!pairName){alert("Enter Pair Name");return;}
-  if(!count||count<1||count>20){alert("Enter 1-20");return;}
+  const pairText=pairInput.value.trim();
+  if(!pairText){alert("Enter at least one pair"); return;}
+  if(!count||count<1||count>20){alert("Enter 1-20"); return;}
 
+  const pairs=pairText.split(",").map(p=>p.trim());
   const tf=timeFrame.value+"M";
-  let actions=[];
-  if(signalMode.value==="CALL") actions=Array(count).fill("CALL");
-  else if(signalMode.value==="PUT") actions=Array(count).fill("PUT");
-  else{
-    for(let i=0;i<count;i++) actions.push(i%2===0?"CALL":"PUT");
-    actions.sort(()=>Math.random()-0.5);
-  }
 
   let body="";
-  let t=new Date();
-  for(let i=0;i<count;i++){
-    const gap=Math.floor(Math.random()*3)+3; // 3-5 min random
-    t.setMinutes(t.getMinutes()+gap);
-    body+=`${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${actions[i]}\n`;
-  }
+  let now=new Date();
+
+  pairs.forEach(pairName=>{
+    let actions=[];
+    if(signalMode.value==="CALL") actions=Array(count).fill("CALL");
+    else if(signalMode.value==="PUT") actions=Array(count).fill("PUT");
+    else{
+      for(let i=0;i<count;i++) actions.push(i%2===0?"CALL":"PUT");
+      actions.sort(()=>Math.random()-0.5);
+    }
+
+    let t=new Date(now);
+    for(let i=0;i<count;i++){
+      const gap=Math.floor(Math.random()*3)+3; // 3-5 min
+      t.setMinutes(t.getMinutes()+gap);
+      body+=`${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${actions[i]}\n`;
+    }
+    body+="\n";
+  });
 
   signalBox.style.display="block";
   signalBox.innerText=body;
