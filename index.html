@@ -223,7 +223,7 @@ function submitCode(){
   generateSignal();
 }
 
-/* SIGNAL GENERATION - Total signals in one list */
+/* SIGNAL GENERATION - Balanced CALL/PUT */
 function generateSignal(){
   const totalSignals = parseInt(signalCount.value);
   const pairText = pairInput.value.trim();
@@ -252,12 +252,23 @@ TIME: ${timeFrame.value} Minute
   let body = "";
   let t = new Date(now);
 
+  // Prepare balanced CALL/PUT array
+  let actions = [];
+  if(signalMode.value==="CALL") actions = Array(totalSignals).fill("CALL");
+  else if(signalMode.value==="PUT") actions = Array(totalSignals).fill("PUT");
+  else { // BOTH
+    let half = Math.floor(totalSignals/2);
+    actions = Array(half).fill("CALL").concat(Array(totalSignals-half).fill("PUT"));
+    // Shuffle a bit for randomness but keep balance
+    for(let i=actions.length-1;i>0;i--){
+      let j = Math.floor(Math.random()*(i+1));
+      [actions[i],actions[j]] = [actions[j],actions[i]];
+    }
+  }
+
   for(let i=0;i<totalSignals;i++){
     const pairName = pairs[i % pairs.length]; // Round-robin
-    let action = "";
-    if(signalMode.value==="CALL") action="CALL";
-    else if(signalMode.value==="PUT") action="PUT";
-    else action = Math.random()<0.5?"CALL":"PUT";
+    const action = actions[i];
 
     const gap = Math.floor(Math.random()*2)+3; // 3-4 min random gap
     t.setMinutes(t.getMinutes()+gap);
