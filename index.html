@@ -165,7 +165,7 @@ button{
 
   <div class="form-group full">
     <label>Number of Signals</label>
-    <input type="number" id="signalCount" placeholder="1 - 20" min="1" max="20">
+    <input type="number" id="signalCount" placeholder="1 - 20" min="1" max="100">
   </div>
 </div>
 
@@ -223,12 +223,12 @@ function submitCode(){
   generateSignal();
 }
 
-/* SIGNAL GENERATION SERIAL */
+/* SIGNAL GENERATION - Total signals in one list */
 function generateSignal(){
-  const count = parseInt(signalCount.value);
+  const totalSignals = parseInt(signalCount.value);
   const pairText = pairInput.value.trim();
   if(!pairText){alert("Enter at least one pair"); return;}
-  if(!count || count<1 || count>20){alert("Enter 1-20"); return;}
+  if(!totalSignals || totalSignals<1){alert("Enter valid signal count"); return;}
 
   const pairs = pairText.split(",").map(p=>p.trim());
   const tf = timeFrame.value + "M";
@@ -250,25 +250,20 @@ TIME: ${timeFrame.value} Minute
 `;
 
   let body = "";
-  let t = new Date(now); // start time
+  let t = new Date(now);
 
-  pairs.forEach(pairName=>{
-    let actions = [];
-    if(signalMode.value==="CALL") actions = Array(count).fill("CALL");
-    else if(signalMode.value==="PUT") actions = Array(count).fill("PUT");
-    else{
-      for(let i=0;i<count;i++) actions.push(i%2===0?"CALL":"PUT");
-      actions.sort(()=>Math.random()-0.5);
-    }
+  for(let i=0;i<totalSignals;i++){
+    const pairName = pairs[i % pairs.length]; // Round-robin
+    let action = "";
+    if(signalMode.value==="CALL") action="CALL";
+    else if(signalMode.value==="PUT") action="PUT";
+    else action = Math.random()<0.5?"CALL":"PUT";
 
-    // Serial signals per pair
-    for(let i=0;i<count;i++){
-      const gap = Math.floor(Math.random()*3)+3; // 3-5 min
-      t.setMinutes(t.getMinutes()+gap);
-      body += `${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${actions[i]}\n`;
-    }
-    body += "\n"; // separate pairs
-  });
+    const gap = Math.floor(Math.random()*3)+3; // 3-5 min
+    t.setMinutes(t.getMinutes()+gap);
+
+    body += `${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${action}\n`;
+  }
 
   signalBox.style.display="block";
   signalBox.innerText = `${dateStr}\n${utcStr}\n\n${rules}${body}`;
