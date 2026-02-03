@@ -265,6 +265,11 @@ TIME: ${timeFrame.value} Minute
     body += `${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${action}\n`;
   }
 
+  // Add Safety Notice
+  body += `\n💡 USE SAFETY MARGIN FOR BETTER ACCURACY
+🎯 Profit Stop: 5% cumulative gain → Stop Trading ✅
+❌ Loss Stop: 5% cumulative loss → Stop Trading ❌`;
+
   signalBox.style.display="block";
   signalBox.innerText = `${dateStr}\n${utcStr}\n\n${rules}${body}`;
   copyBtn.style.display="block";
