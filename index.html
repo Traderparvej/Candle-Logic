@@ -2,185 +2,48 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quotex Signal Engine - Smart Pro Trader</title>
+<title>Live Pro Smart Signals</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;}
-body{
-  margin:0;
-  background:radial-gradient(circle at top,#1a0a0a,#050202);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-family:'Roboto Mono',monospace;
-  color:#fff;
-}
-.panel{
-  width:470px;
-  padding:26px;
-  border-radius:24px;
-  background:linear-gradient(180deg,#2a0f0f,#100303);
-  box-shadow:0 0 50px rgba(255,0,0,.45);
-  border:2px solid rgba(255,0,0,.25);
-}
-h1{
-  text-align:center;
-  font-family:'Orbitron',sans-serif;
-  font-size:26px;
-  letter-spacing:2px;
-  color:#ff3b3b;
-  text-shadow:0 0 12px #ff0000;
-}
-.clock{
-  text-align:center;
-  font-family:'Orbitron',sans-serif;
-  font-size:16px;
-  margin:10px 0 16px;
-  color:#ff7f7f;
-}
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-}
+body{margin:0;background:radial-gradient(circle at top,#1a0a0a,#050202);min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:'Roboto Mono',monospace;color:#fff;}
+.panel{width:470px;padding:26px;border-radius:24px;background:linear-gradient(180deg,#2a0f0f,#100303);box-shadow:0 0 50px rgba(255,0,0,.45);border:2px solid rgba(255,0,0,.25);}
+h1{text-align:center;font-family:'Orbitron',sans-serif;font-size:26px;letter-spacing:2px;color:#ff3b3b;text-shadow:0 0 12px #ff0000;}
+.clock{text-align:center;font-family:'Orbitron',sans-serif;font-size:16px;margin:10px 0 16px;color:#ff7f7f;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .form-group{display:flex;flex-direction:column;}
 .form-group.full{grid-column:1/-1;}
 label{font-size:11px;opacity:.85;margin-bottom:4px;}
-select,input{
-  padding:13px;
-  background:#2b0c0c;
-  border:1px solid #ff3b3b55;
-  border-radius:14px;
-  color:#ffd9d9;
-}
-button{
-  width:48%;
-  padding:15px;
-  border:none;
-  border-radius:20px;
-  background:linear-gradient(90deg,#ff3b3b,#ff0000);
-  font-family:'Orbitron',sans-serif;
-  font-size:14px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 0 25px rgba(255,0,0,.75);
-}
-.signal{
-  margin-top:22px;
-  padding:16px;
-  border-radius:18px;
-  background:#1b0a0a;
-  border:2px solid rgba(255,0,0,.35);
-  display:none;
-  white-space:pre-line;
-  font-size:14px;
-}
-.copy-btn{
-  margin-top:10px;
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:18px;
-  background:#00ff9c;
-  color:#000;
-  font-weight:700;
-  cursor:pointer;
-}
-.modal-bg{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  backdrop-filter:blur(4px);
-  align-items:center;
-  justify-content:center;
-}
-.modal{
-  background:#2a0a0a;
-  padding:22px;
-  border-radius:16px;
-  width:300px;
-  border:2px solid #ff3b3b;
-  text-align:center;
-}
-.modal input{
-  width:100%;
-  padding:12px;
-  margin-bottom:12px;
-  border-radius:12px;
-  background:#1c0b0b;
-  border:1px solid #ff3b3b55;
-  color:#ffd9d9;
-}
+select,input{padding:13px;background:#2b0c0c;border:1px solid #ff3b3b55;border-radius:14px;color:#ffd9d9;}
+button{width:48%;padding:15px;border:none;border-radius:20px;background:linear-gradient(90deg,#ff3b3b,#ff0000);font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 0 25px rgba(255,0,0,.75);}
+.signal{margin-top:22px;padding:16px;border-radius:18px;background:#1b0a0a;border:2px solid rgba(255,0,0,.35);display:none;white-space:pre-line;font-size:14px;}
+.copy-btn{margin-top:10px;width:100%;padding:12px;border:none;border-radius:18px;background:#00ff9c;color:#000;font-weight:700;cursor:pointer;}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);align-items:center;justify-content:center;}
+.modal{background:#2a0a0a;padding:22px;border-radius:16px;width:300px;border:2px solid #ff3b3b;text-align:center;}
+.modal input{width:100%;padding:12px;margin-bottom:12px;border-radius:12px;background:#1c0b0b;border:1px solid #ff3b3b55;color:#ffd9d9;}
 .modal .error{color:#ff6666;font-size:13px;}
 </style>
 </head>
-
 <body>
 <div class="panel">
-<h1>FRACTAL LOGIC</h1>
+<h1>LIVE PRO SIGNALS</h1>
 <div class="clock" id="clock"></div>
 
 <div class="form-grid">
-  <div class="form-group">
-    <label>Broker</label>
-    <select id="broker">
-      <option>Quotex</option>
-      <option>Pocket Option</option>
-      <option>Binomo</option>
-    </select>
-  </div>
-
-  <div class="form-group full">
-    <label>Asset Pair(s) (Manual, comma-separated)</label>
-    <input type="text" id="pairInput" placeholder="USD/TRY_otc,USD/BRL_otc,EUR/JPY">
-  </div>
-
-  <div class="form-group">
-    <label>Time Frame</label>
-    <select id="timeFrame">
-      <option value="1">1 Minute</option>
-      <option value="2">2 Minute</option>
-      <option value="5">5 Minute</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label>Time Mode</label>
-    <select><option>BDT (GMT +6)</option></select>
-  </div>
-
-  <div class="form-group full">
-    <label>Signal Mode</label>
-    <select id="signalMode">
-      <option value="BOTH">CALL & PUT</option>
-      <option value="CALL">CALL Only</option>
-      <option value="PUT">PUT Only</option>
-    </select>
-  </div>
-
-  <div class="form-group full">
-    <label>Number of Signals</label>
-    <input type="number" id="signalCount" placeholder="1 - 20" min="1" max="100">
-  </div>
-
-  <!-- Signal Start/End Time -->
-  <div class="form-group">
-    <label>Signal Start Time</label>
-    <input type="time" id="startTime">
-  </div>
-
-  <div class="form-group">
-    <label>Signal End Time</label>
-    <input type="time" id="endTime">
-  </div>
+<div class="form-group"><label>Broker</label><select id="broker"><option>Quotex</option><option>Pocket Option</option><option>Binomo</option></select></div>
+<div class="form-group full"><label>Asset Pair(s)</label><input type="text" id="pairInput" placeholder="USD/TRY_otc,EUR/JPY,USD/BRL"></div>
+<div class="form-group"><label>Time Frame</label><select id="timeFrame"><option value="1">1 Minute</option><option value="2">2 Minute</option><option value="5">5 Minute</option></select></div>
+<div class="form-group"><label>Time Mode</label><select><option>BDT (GMT +6)</option></select></div>
+<div class="form-group full"><label>Signal Mode</label><select id="signalMode"><option value="BOTH">CALL & PUT</option><option value="CALL">CALL Only</option><option value="PUT">PUT Only</option></select></div>
+<div class="form-group full"><label>Number of Signals</label><input type="number" id="signalCount" placeholder="1 - 20" min="1" max="100"></div>
+<div class="form-group"><label>Signal Start Time</label><input type="time" id="startTime"></div>
+<div class="form-group"><label>Signal End Time</label><input type="time" id="endTime"></div>
 </div>
 
 <div style="display:flex;justify-content:space-between;margin-top:18px;">
-  <button onclick="openModal()">GENERATE</button>
-  <button onclick="resetSignal()">RESET</button>
+<button onclick="openModal()">GENERATE</button>
+<button onclick="resetSignal()">RESET</button>
 </div>
 
 <div class="signal" id="signalBox"></div>
@@ -188,18 +51,16 @@ button{
 </div>
 
 <div class="modal-bg" id="modalBg">
-  <div class="modal">
-    <h3 style="color:#ff3b3b;">🔒 Verification</h3>
-    <input type="password" id="codeInput" placeholder="Enter code">
-    <button onclick="submitCode()">Submit</button>
-    <div class="error" id="modalError"></div>
-  </div>
+<div class="modal">
+<h3 style="color:#ff3b3b;">🔒 Verification</h3>
+<input type="password" id="codeInput" placeholder="Enter code">
+<button onclick="submitCode()">Submit</button>
+<div class="error" id="modalError"></div>
+</div>
 </div>
 
 <script>
 const verifyCode="105";
-
-/* DOM Elements */
 const pairInput=document.getElementById("pairInput");
 const timeFrame=document.getElementById("timeFrame");
 const signalMode=document.getElementById("signalMode");
@@ -213,126 +74,86 @@ const startTimeInput=document.getElementById("startTime");
 const endTimeInput=document.getElementById("endTime");
 
 /* Clock */
-setInterval(()=>{
-  const n=new Date();
-  clock.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
-},1000);
+setInterval(()=>{const n=new Date();clock.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;},1000);
 
 /* Modal */
-function openModal(){
-  modalBg.style.display="flex";
-  modalError.innerText="";
-  codeInput.value="";
-  codeInput.focus();
-}
-function submitCode(){
-  if(codeInput.value!==verifyCode){
-    modalError.innerText="❌ Invalid Code";
-    return;
-  }
-  modalBg.style.display="none";
-  generateSignal();
+function openModal(){modalBg.style.display="flex";modalError.innerText="";codeInput.value="";codeInput.focus();}
+function submitCode(){if(codeInput.value!==verifyCode){modalError.innerText="❌ Invalid Code";return;}modalBg.style.display="none";generateSignal();}
+
+/* ===== LIVE API Placeholder Function ===== */
+async function getLiveMarketData(pair, timeframe){
+  return new Promise(resolve=>{
+    setTimeout(()=>{resolve({trend:Math.random()<0.5?"UP":"DOWN",isDoji:false,bigCandle:false,volatility:1+Math.random()});},100);
+  });
 }
 
-/* SIGNAL GENERATION - Smart Pro Trader Cluster Logic */
-function generateSignal(){
+/* Smart Live Signal Generator with Alternating Cluster Logic */
+async function generateSignal(){
   const totalSignals = parseInt(signalCount.value);
   const pairText = pairInput.value.trim();
-  if(!pairText){alert("Enter at least one pair"); return;}
-  if(!totalSignals || totalSignals<1){alert("Enter valid signal count"); return;}
-
+  if(!pairText){alert("Enter at least one pair");return;}
+  if(!totalSignals || totalSignals<1){alert("Enter valid signal count");return;}
   const startTimeValue = startTimeInput.value;
   const endTimeValue = endTimeInput.value;
-  if(!startTimeValue || !endTimeValue){alert("Set start & end time"); return;}
-
+  if(!startTimeValue || !endTimeValue){alert("Set start & end time");return;}
   const [startH,startM] = startTimeValue.split(":").map(Number);
   const [endH,endM] = endTimeValue.split(":").map(Number);
-
-  const startDate = new Date();
-  startDate.setHours(startH, startM, 0, 0);
-
-  const endDate = new Date();
-  endDate.setHours(endH, endM, 0, 0);
-
-  if(endDate <= startDate){alert("End Time must be after Start Time"); return;}
+  const startDate = new Date(); startDate.setHours(startH,startM,0,0);
+  const endDate = new Date(); endDate.setHours(endH,endM,0,0);
+  if(endDate<=startDate){alert("End Time must be after Start Time");return;}
 
   const pairs = pairText.split(",").map(p=>p.trim());
   const tf = timeFrame.value + "M";
   const now = new Date();
+  const dateStr=`DATE: ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+  const utcStr=`UTC: +06:00`;
+  const rules=`RULES:\n• Use 1 Step MTG\n• Avoid Gap Up/Down\n• Avoid Doji\n• Avoid Opposite Trend\n• Avoid Big Candle\n• Avoid Back-to-Back 3 Opposite Candle\n\nTIME: ${timeFrame.value} Minute\n`;
 
-  const dateStr = `DATE: ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
-  const utcStr = `UTC: +06:00`;
-
-  const rules = 
-`RULES:
-• Use 1 Step MTG
-• Avoid Gap Up/Down
-• Avoid Doji
-• Avoid Opposite Trend
-• Avoid Big Candle
-• Avoid Back-to-Back 3 Opposite Candle
-
-TIME: ${timeFrame.value} Minute
-`;
-
-  // ---------- Trend-based placeholder ----------
-  const trendBias = Math.random()<0.5 ? "UP" : "DOWN";
-
-  // ---------- Actions Generation ----------
   let actions = [];
   if(signalMode.value==="CALL") actions = Array(totalSignals).fill("CALL");
   else if(signalMode.value==="PUT") actions = Array(totalSignals).fill("PUT");
-  else { 
-    // BOTH mode - Cluster + trend bias
+  else {
     let remaining = totalSignals;
-    let lastAction = trendBias==="UP" ? "CALL" : "PUT";
+    let lastAction = Math.random()<0.5?"CALL":"PUT";
     while(remaining>0){
-      let clusterSize = Math.min(remaining, Math.floor(Math.random()*3)+2); // 2-4 signals per cluster
-      for(let i=0;i<clusterSize;i++){
-        actions.push(lastAction);
-      }
-      remaining -= clusterSize;
-      // switch action with 70% chance, otherwise repeat trend bias
-      lastAction = (Math.random()<0.7) ? (lastAction==="CALL" ? "PUT" : "CALL") : lastAction;
+      let clusterSize = Math.min(remaining, Math.floor(Math.random()*2)+1); // 1-2 same
+      for(let i=0;i<clusterSize;i++) actions.push(lastAction);
+      remaining-=clusterSize;
+      lastAction = Math.random()<0.8 ? (lastAction==="CALL"?"PUT":"CALL") : lastAction;
     }
   }
 
-  // Spread signals across Start → End time
-  const totalMinutes = (endDate - startDate)/60000;
-  const gap = Math.floor(totalMinutes / totalSignals);
-
+  const totalMinutes = (endDate-startDate)/60000;
+  let gap = Math.floor(totalMinutes/totalSignals);
   let body = "";
   let t = new Date(startDate);
 
   for(let i=0;i<actions.length;i++){
-    const pairName = pairs[i % pairs.length];
+    const pairName = pairs[i%pairs.length];
     const action = actions[i];
 
-    // ±1-2 min random offset for realism
-    let randomOffset = Math.floor(Math.random()*5) - 2; // -2, -1, 0, 1, 2
-    t.setMinutes(t.getMinutes() + gap + randomOffset);
-
-    if(t > endDate) break;
-
-    body += `${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${action}\n`;
+    let market = await getLiveMarketData(pairName, tf);
+    let volGap = Math.max(1, Math.floor(gap/market.volatility));
+    let randomOffset = Math.floor(Math.random()*5)-2;
+    if(market.isDoji || market.bigCandle){randomOffset+=1;}
+    t.setMinutes(t.getMinutes()+volGap+randomOffset);
+    if(t>endDate) break;
+    let finalAction = action;
+    if(signalMode.value==="BOTH"){
+      if(market.trend==="UP") finalAction="CALL";
+      else if(market.trend==="DOWN") finalAction="PUT";
+    }
+    body+=`${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${finalAction}\n`;
   }
 
-  body += `\n💡 USE SAFETY MARGIN FOR BETTER ACCURACY`;
-
+  body+=`\n💡 USE SAFETY MARGIN FOR BETTER ACCURACY`;
   signalBox.style.display="block";
-  signalBox.innerText = `${dateStr}\n${utcStr}\n\n${rules}${body}`;
+  signalBox.innerText=`${dateStr}\n${utcStr}\n\n${rules}${body}`;
   copyBtn.style.display="block";
 }
 
-/* Reset & Copy */
-function resetSignal(){
-  signalBox.style.display="none";
-  copyBtn.style.display="none";
-  signalBox.innerText="";
-}
-function copySignal(){
-  navigator.clipboard.writeText(signalBox.innerText);
-}
+function resetSignal(){signalBox.style.display="none";copyBtn.style.display="none";signalBox.innerText="";}
+function copySignal(){navigator.clipboard.writeText(signalBox.innerText);}
 </script>
 </body>
 </html>
