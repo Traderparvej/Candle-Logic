@@ -91,7 +91,7 @@ async function getLiveMarketData(pair, timeframe){
   });
 }
 
-/* Final Signal Generator with 1 Step MTG and same-pair cluster */
+/* Final Signal Generator with emoji after Call/Put */
 async function generateSignal(){
   const totalSignals = parseInt(signalCount.value);
   const pairText = pairInput.value.trim();
@@ -114,7 +114,6 @@ async function generateSignal(){
 
   const rules=`RULES:\n• Use 1 Step MTG\n• Avoid Doji\n• Avoid Big Candle\n• Avoid Opposite Trend\n\nTIME: ${timeFrame.value} Minute\n`;
 
-  // Prepare actions array with clusters
   let actions = [];
   if(signalMode.value==="CALL") actions = Array(totalSignals).fill("CALL");
   else if(signalMode.value==="PUT") actions = Array(totalSignals).fill("PUT");
@@ -122,7 +121,7 @@ async function generateSignal(){
     let remaining = totalSignals;
     let lastAction = Math.random()<0.5?"CALL":"PUT";
     while(remaining>0){
-      let clusterSize = Math.min(remaining,2); // 2 signals per cluster
+      let clusterSize = Math.min(remaining,2);
       for(let i=0;i<clusterSize;i++) actions.push(lastAction);
       remaining-=clusterSize;
       lastAction = lastAction==="CALL"?"PUT":"CALL";
@@ -137,23 +136,23 @@ async function generateSignal(){
   let t = new Date(startDate);
 
   for(let i=0;i<actions.length;i++){
-    const clusterIndex = Math.floor(i/2); // each cluster of 2 signals
-    const pairName = pairs[clusterIndex % pairs.length]; // same pair for 2 consecutive signals
+    const clusterIndex = Math.floor(i/2);
+    const pairName = pairs[clusterIndex % pairs.length];
     const action = actions[i];
-    const icon = action==="CALL"?"🟢 BUY":"🔴 PUT";
+    const icon = action==="CALL"?"🟢":"🔴"; // emoji after CALL/PUT
+    const actionText = action==="CALL"?"CALL":"PUT";
 
-    // Cluster gap logic
-    if(i%2===1) t.setMinutes(t.getMinutes() + 1); // inside cluster
-    else t.setMinutes(t.getMinutes() + gapBetweenClusters); // between clusters
+    if(i%2===1) t.setMinutes(t.getMinutes() + 1); 
+    else t.setMinutes(t.getMinutes() + gapBetweenClusters);
 
     if(t>endDate) break;
 
     let market = await getLiveMarketData(pairName, tf);
     if(market.trend==="OPPOSITE" || market.isDoji || market.bigCandle) {
-      t.setMinutes(t.getMinutes() + 1); // skip bad candle
+      t.setMinutes(t.getMinutes() + 1);
     }
 
-    body+=`${pairName} – ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${icon}\n`;
+    body+=`${pairName} – ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${actionText} ${icon}\n`;
   }
 
   body+=`\n💡 USE SAFETY MARGIN FOR BETTER ACCURACY`;
