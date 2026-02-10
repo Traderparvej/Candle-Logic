@@ -37,8 +37,8 @@ button{width:48%;padding:15px;border:none;border-radius:20px;background:linear-g
 <div class="form-group"><label>Time Mode</label><select><option>BDT (GMT +6)</option></select></div>
 <div class="form-group full"><label>Signal Mode</label><select id="signalMode"><option value="BOTH">CALL & PUT</option><option value="CALL">CALL Only</option><option value="PUT">PUT Only</option></select></div>
 <div class="form-group full"><label>Number of Signals</label><input type="number" id="signalCount" placeholder="1 - 20" min="1" max="100"></div>
-<div class="form-group"><label>Signal Start Time</label><input type="time" id="startTime"></div>
-<div class="form-group"><label>Signal End Time</label><input type="time" id="endTime"></div>
+<div class="form-group"><label>Signal Start Time</label><input type="time" id="startTime" step="60"></div>
+<div class="form-group"><label>Signal End Time</label><input type="time" id="endTime" step="60"></div>
 </div>
 
 <div style="display:flex;justify-content:space-between;margin-top:18px;">
