@@ -72,22 +72,26 @@ const modalError=document.getElementById("modalError");
 const codeInput=document.getElementById("codeInput");
 const startTimeInput=document.getElementById("startTime");
 const endTimeInput=document.getElementById("endTime");
+const clock=document.getElementById("clock");
 
 /* Clock */
-setInterval(()=>{const n=new Date();clock.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;},1000);
+setInterval(()=>{
+    const n=new Date();
+    clock.innerText=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+},1000);
 
 /* Modal */
 function openModal(){modalBg.style.display="flex";modalError.innerText="";codeInput.value="";codeInput.focus();}
 function submitCode(){if(codeInput.value!==verifyCode){modalError.innerText="❌ Invalid Code";return;}modalBg.style.display="none";generateSignal();}
 
-/* ===== LIVE API Placeholder Function ===== */
+/* Placeholder for Live Market Data */
 async function getLiveMarketData(pair, timeframe){
   return new Promise(resolve=>{
     setTimeout(()=>{resolve({trend:Math.random()<0.5?"UP":"DOWN",isDoji:false,bigCandle:false,volatility:1+Math.random()});},100);
   });
 }
 
-/* Smart Live Signal Generator with Alternating Cluster Logic */
+/* Smart Live Signal Generator with Cluster & Gap Logic */
 async function generateSignal(){
   const totalSignals = parseInt(signalCount.value);
   const pairText = pairInput.value.trim();
@@ -107,7 +111,7 @@ async function generateSignal(){
   const now = new Date();
   const dateStr=`DATE: ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
   const utcStr=`UTC: +06:00`;
-  const rules=`RULES:\n• Use 1 Step MTG\n• Avoid Gap Up/Down\n• Avoid Doji\n• Avoid Opposite Trend\n• Avoid Big Candle\n• Avoid Back-to-Back 3 Opposite Candle\n\nTIME: ${timeFrame.value} Minute\n`;
+  const rules=`RULES:\n• Consecutive 2 signals same side (cluster)\n• 1 min gap inside cluster\n• Proportional gap between clusters\n\nTIME: ${timeFrame.value} Minute\n`;
 
   let actions = [];
   if(signalMode.value==="CALL") actions = Array(totalSignals).fill("CALL");
@@ -116,15 +120,15 @@ async function generateSignal(){
     let remaining = totalSignals;
     let lastAction = Math.random()<0.5?"CALL":"PUT";
     while(remaining>0){
-      let clusterSize = Math.min(remaining, Math.floor(Math.random()*2)+1); // 1-2 same
+      let clusterSize = Math.min(remaining, 2); // max 2 consecutive same signals
       for(let i=0;i<clusterSize;i++) actions.push(lastAction);
       remaining-=clusterSize;
-      lastAction = Math.random()<0.8 ? (lastAction==="CALL"?"PUT":"CALL") : lastAction;
+      lastAction = lastAction==="CALL"?"PUT":"CALL";
     }
   }
 
   const totalMinutes = (endDate-startDate)/60000;
-  let gap = Math.floor(totalMinutes/totalSignals);
+  let gapBetweenClusters = Math.floor(totalMinutes/actions.length); // proportional gap
   let body = "";
   let t = new Date(startDate);
 
@@ -132,18 +136,13 @@ async function generateSignal(){
     const pairName = pairs[i%pairs.length];
     const action = actions[i];
 
-    let market = await getLiveMarketData(pairName, tf);
-    let volGap = Math.max(1, Math.floor(gap/market.volatility));
-    let randomOffset = Math.floor(Math.random()*5)-2;
-    if(market.isDoji || market.bigCandle){randomOffset+=1;}
-    t.setMinutes(t.getMinutes()+volGap+randomOffset);
+    // 1 min gap inside cluster + proportional gap between clusters
+    let increment = (i%2===0 ? 1 : gapBetweenClusters); 
+    t.setMinutes(t.getMinutes() + increment);
+
     if(t>endDate) break;
-    let finalAction = action;
-    if(signalMode.value==="BOTH"){
-      if(market.trend==="UP") finalAction="CALL";
-      else if(market.trend==="DOWN") finalAction="PUT";
-    }
-    body+=`${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${finalAction}\n`;
+
+    body+=`${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${action}\n`;
   }
 
   body+=`\n💡 USE SAFETY MARGIN FOR BETTER ACCURACY`;
