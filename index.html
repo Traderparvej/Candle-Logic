@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quotex Signal Engine - Fractal Logic</title>
+<title>Quotex Signal Engine - Smart Pro Trader</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -166,7 +166,7 @@ button{
     <input type="number" id="signalCount" placeholder="1 - 20" min="1" max="100">
   </div>
 
-  <!-- Pro Trader Start/End Time -->
+  <!-- Signal Start/End Time -->
   <div class="form-group">
     <label>Signal Start Time</label>
     <input type="time" id="startTime">
@@ -175,12 +175,6 @@ button{
   <div class="form-group">
     <label>Signal End Time</label>
     <input type="time" id="endTime">
-  </div>
-
-  <!-- Weighted Ratio Option -->
-  <div class="form-group full">
-    <label>CALL Ratio (%)</label>
-    <input type="number" id="callRatio" placeholder="50" min="0" max="100">
   </div>
 </div>
 
@@ -217,7 +211,6 @@ const modalError=document.getElementById("modalError");
 const codeInput=document.getElementById("codeInput");
 const startTimeInput=document.getElementById("startTime");
 const endTimeInput=document.getElementById("endTime");
-const callRatioInput=document.getElementById("callRatio");
 
 /* Clock */
 setInterval(()=>{
@@ -241,7 +234,7 @@ function submitCode(){
   generateSignal();
 }
 
-/* SIGNAL GENERATION - Pro Trader */
+/* SIGNAL GENERATION - Smart Pro Trader Cluster Logic */
 function generateSignal(){
   const totalSignals = parseInt(signalCount.value);
   const pairText = pairInput.value.trim();
@@ -282,25 +275,25 @@ function generateSignal(){
 TIME: ${timeFrame.value} Minute
 `;
 
-  // Pro Trader Weighted CALL/PUT
-  let callRatio = parseInt(callRatioInput.value);
-  if(isNaN(callRatio) || callRatio<0 || callRatio>100) callRatio=50; // default 50%
-  const callCount = Math.round(totalSignals*callRatio/100);
-  const putCount = totalSignals - callCount;
+  // ---------- Trend-based placeholder ----------
+  const trendBias = Math.random()<0.5 ? "UP" : "DOWN";
 
+  // ---------- Actions Generation ----------
   let actions = [];
   if(signalMode.value==="CALL") actions = Array(totalSignals).fill("CALL");
   else if(signalMode.value==="PUT") actions = Array(totalSignals).fill("PUT");
-  else { // BOTH
-    // Alternating pattern + weighted
-    for(let i=0;i<totalSignals;i++){
-      if(i<callCount) actions.push("CALL");
-      else actions.push("PUT");
-    }
-    // Shuffle slightly for realism
-    for(let i=actions.length-1;i>0;i--){
-      let j = Math.floor(Math.random()*(i+1));
-      [actions[i],actions[j]] = [actions[j],actions[i]];
+  else { 
+    // BOTH mode - Cluster + trend bias
+    let remaining = totalSignals;
+    let lastAction = trendBias==="UP" ? "CALL" : "PUT";
+    while(remaining>0){
+      let clusterSize = Math.min(remaining, Math.floor(Math.random()*3)+2); // 2-4 signals per cluster
+      for(let i=0;i<clusterSize;i++){
+        actions.push(lastAction);
+      }
+      remaining -= clusterSize;
+      // switch action with 70% chance, otherwise repeat trend bias
+      lastAction = (Math.random()<0.7) ? (lastAction==="CALL" ? "PUT" : "CALL") : lastAction;
     }
   }
 
@@ -315,8 +308,8 @@ TIME: ${timeFrame.value} Minute
     const pairName = pairs[i % pairs.length];
     const action = actions[i];
 
-    // Add ±1 minute random offset for realism
-    let randomOffset = Math.floor(Math.random()*3) - 1; // -1,0,1
+    // ±1-2 min random offset for realism
+    let randomOffset = Math.floor(Math.random()*5) - 2; // -2, -1, 0, 1, 2
     t.setMinutes(t.getMinutes() + gap + randomOffset);
 
     if(t > endDate) break;
