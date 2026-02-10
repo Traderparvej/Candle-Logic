@@ -87,11 +87,11 @@ function submitCode(){if(codeInput.value!==verifyCode){modalError.innerText="❌
 /* Placeholder for Live Market Data */
 async function getLiveMarketData(pair, timeframe){
   return new Promise(resolve=>{
-    setTimeout(()=>{resolve({trend:Math.random()<0.5?"UP":"DOWN",isDoji:false,bigCandle:false,volatility:1+Math.random()});},100);
+    setTimeout(()=>{resolve({trend:Math.random()<0.5?"UP":"DOWN"});},100);
   });
 }
 
-/* Smart Live Signal Generator with Cluster & Gap Logic */
+/* Final Signal Generator with 2-signal clusters & proportional gap */
 async function generateSignal(){
   const totalSignals = parseInt(signalCount.value);
   const pairText = pairInput.value.trim();
@@ -111,8 +111,9 @@ async function generateSignal(){
   const now = new Date();
   const dateStr=`DATE: ${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
   const utcStr=`UTC: +06:00`;
-  const rules=`RULES:\n• Consecutive 2 signals same side (cluster)\n• 1 min gap inside cluster\n• Proportional gap between clusters\n\nTIME: ${timeFrame.value} Minute\n`;
+  const rules=`RULES:\n• 2 consecutive signals same side (cluster)\n• 1 min gap inside cluster\n• Proportional gap between clusters to fill End Time\n\nTIME: ${timeFrame.value} Minute\n`;
 
+  // Prepare actions array
   let actions = [];
   if(signalMode.value==="CALL") actions = Array(totalSignals).fill("CALL");
   else if(signalMode.value==="PUT") actions = Array(totalSignals).fill("PUT");
@@ -120,7 +121,7 @@ async function generateSignal(){
     let remaining = totalSignals;
     let lastAction = Math.random()<0.5?"CALL":"PUT";
     while(remaining>0){
-      let clusterSize = Math.min(remaining, 2); // max 2 consecutive same signals
+      let clusterSize = Math.min(remaining,2); // max 2 consecutive same signals
       for(let i=0;i<clusterSize;i++) actions.push(lastAction);
       remaining-=clusterSize;
       lastAction = lastAction==="CALL"?"PUT":"CALL";
@@ -128,21 +129,23 @@ async function generateSignal(){
   }
 
   const totalMinutes = (endDate-startDate)/60000;
-  let gapBetweenClusters = Math.floor(totalMinutes/actions.length); // proportional gap
+  const numClusters = Math.ceil(actions.length/2);
+  const gapBetweenClusters = Math.floor((totalMinutes - numClusters)/numClusters);
+
   let body = "";
   let t = new Date(startDate);
 
   for(let i=0;i<actions.length;i++){
     const pairName = pairs[i%pairs.length];
     const action = actions[i];
+    const icon = action==="CALL"?"🟢 BUY":"🔴 PUT";
 
-    // 1 min gap inside cluster + proportional gap between clusters
-    let increment = (i%2===0 ? 1 : gapBetweenClusters); 
-    t.setMinutes(t.getMinutes() + increment);
+    if(i%2===1) t.setMinutes(t.getMinutes() + 1); // 1 min inside cluster
+    else t.setMinutes(t.getMinutes() + gapBetweenClusters); // proportional gap between clusters
 
     if(t>endDate) break;
 
-    body+=`${pairName}, ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${tf} ${action}\n`;
+    body+=`${pairName} – ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – ${icon}\n`;
   }
 
   body+=`\n💡 USE SAFETY MARGIN FOR BETTER ACCURACY`;
