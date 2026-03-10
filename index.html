@@ -16,7 +16,7 @@
                 extend: {
                     fontFamily: {
                         orbitron: ["Orbitron", "sans-serif"],
-                        mono: ["Roboto Mono", "monospace"],
+                        mono:["Roboto Mono", "monospace"],
                     },
                     colors: {
                         'brand-red': '#ff3b3b',
@@ -130,12 +130,12 @@
             );
         };
 
-        const REAL_PAIRS = [
+        const REAL_PAIRS =[
             'EUR/USD', 'GBP/USD', 'USD/JPY', 'AUD/USD', 'USD/CAD', 
             'EUR/GBP', 'EUR/JPY', 'GBP/JPY', 'USD/CHF'
         ];
 
-        const OTC_PAIRS = [
+        const OTC_PAIRS =[
             "USD/ARS(OTC)", "USD/BDT(OTC)", "USD/EGP(OTC)", "USD/INR(OTC)", "USD/IDR(OTC)", "USD/MXN(OTC)",
             "EUR/AUD(OTC)", "EUR/CHF(OTC)", "EUR/SGD(OTC)", "GBP/CHF(OTC)", "NZD/CAD(OTC)", "AUD/NZD(OTC)",
             "CAD/CHF(OTC)", "EUR/NZD(OTC)", "USD/PHP(OTC)", "GBP/NZD(OTC)", "USD/BRL(OTC)", "USD/ZAR(OTC)",
@@ -157,25 +157,27 @@
             return str.split('').map(c => map[c] || c).join('');
         };
 
-        const _0x5f2e = (s) => btoa(s);
-        const _0x1a2b = "aXRCRDQwNjc="; // "itBD4067" in Base64
+        // 🔑 === এখানে আপনার পাসওয়ার্ড সেট করুন === 🔑
+        const SECRET_PASSWORD = "itBD4067"; 
 
         function App() {
-            const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('_auth_status') === 'true');
-            const [loginPass, setLoginPass] = useState('');
+            // LocalStorage রিমুভ করে দিয়েছি। এখন পেজ রিলোড দিলে বা ওপেন করলে সবসময় আগে পাসওয়ার্ড চাইবে।
+            const[isLoggedIn, setIsLoggedIn] = useState(false);
+            
+            const[loginPass, setLoginPass] = useState('');
             const [loginError, setLoginError] = useState('');
             
             const [currentTime, setCurrentTime] = useState(new Date());
-            const [broker, setBroker] = useState('Quotex');
-            const [selectedPairs, setSelectedPairs] = useState(['USD/BDT(OTC)']);
-            const [timeFrame, setTimeFrame] = useState('1');
-            const [signalMode, setSignalMode] = useState('BOTH');
+            const[broker, setBroker] = useState('Quotex');
+            const[selectedPairs, setSelectedPairs] = useState(['USD/BDT(OTC)']);
+            const[timeFrame, setTimeFrame] = useState('1');
+            const[signalMode, setSignalMode] = useState('BOTH');
             const [signalCount, setSignalCount] = useState('10');
-            const [startTime, setStartTime] = useState('09:00');
+            const[startTime, setStartTime] = useState('09:00');
             const [endTime, setEndTime] = useState('17:00');
             
-            const [generatedSignals, setGeneratedSignals] = useState('');
-            const [isCopied, setIsCopied] = useState(false);
+            const[generatedSignals, setGeneratedSignals] = useState('');
+            const[isCopied, setIsCopied] = useState(false);
             const [isGenerating, setIsGenerating] = useState(false);
 
             useEffect(() => {
@@ -183,7 +185,7 @@
                     setCurrentTime(new Date());
                 }, 1000);
                 return () => clearInterval(timer);
-            }, []);
+            },[]);
 
             const formatTime = (date) => {
                 return date.toLocaleTimeString('en-GB', { hour12: false });
@@ -221,7 +223,7 @@
                     return;
                 }
 
-                const [startH, startM] = startTime.split(":").map(Number);
+                const[startH, startM] = startTime.split(":").map(Number);
                 const [endH, endM] = endTime.split(":").map(Number);
                 
                 const startDate = new Date();
@@ -243,7 +245,7 @@
                 output += `📅 ${toMonospace(dateStr)} | 🏦 ${toMonospace(broker.toUpperCase())}\n`;
                 output += `⏱️ ${toMonospace('TIMEFRAME')}: ${toMonospace(timeFrame + ' MIN')}\n\n`;
 
-                let actions = [];
+                let actions =[];
                 if (signalMode === "CALL") actions = Array(totalSignals).fill("CALL");
                 else if (signalMode === "PUT") actions = Array(totalSignals).fill("PUT");
                 else {
@@ -293,10 +295,11 @@
                 setTimeout(() => setIsCopied(false), 2000);
             };
 
+            // Login Verification Function
             const handleLogin = () => {
-                if (_0x5f2e(loginPass.trim()) === _0x1a2b) {
+                if (loginPass.trim() === SECRET_PASSWORD) {
                     setIsLoggedIn(true);
-                    localStorage.setItem('_auth_status', 'true');
+                    // Local Storage এ আর ডেটা সেভ হবে না, তাই রিলোড দিলেই আবার লগআউট হয়ে যাবে।
                 } else {
                     setLoginError('❌ INVALID ACCESS KEY');
                     setLoginPass('');
